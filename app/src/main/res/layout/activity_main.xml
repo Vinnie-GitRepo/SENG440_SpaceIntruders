@@ -19,6 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/logoscreentop"
+            android:contentDescription="@string/home_ContentDescriptionText"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.444"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -31,7 +32,7 @@
             android:layout_width="206dp"
             android:layout_height="92dp"
             android:text="@string/home_PlayButtonText"
-            android:textSize="40dp"
+            android:textSize="40sp"
             tools:layout_editor_absoluteX="102dp"
             tools:layout_editor_absoluteY="238dp" />
 
@@ -40,7 +41,7 @@
             android:layout_width="206dp"
             android:layout_height="92dp"
             android:text="@string/home_ScoresButtonText"
-            android:textSize="30dp"
+            android:textSize="30sp"
             tools:layout_editor_absoluteX="102dp"
             tools:layout_editor_absoluteY="387dp" />
 
@@ -49,7 +50,7 @@
             android:layout_width="206dp"
             android:layout_height="92dp"
             android:text="@string/home_SettingsButtonText"
-            android:textSize="30dp"
+            android:textSize="30sp"
             tools:layout_editor_absoluteX="102dp"
             tools:layout_editor_absoluteY="528dp" />
 

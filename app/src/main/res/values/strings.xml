@@ -9,4 +9,5 @@
     <string name="home_PlayButtonText">PLAY</string>
     <string name="home_ScoresButtonText">SCORES</string>
     <string name="home_SettingsButtonText">SETTINGS</string>
+    <string name="home_ContentDescriptionText">The home screen of the application, featuring the title at the top, three navigation buttons, and a starry background</string>
 </resources>
