@@ -11,13 +11,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/discoverBtn"
+            android:id="@+id/pair_DiscoverBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Discover Peers" />
 
         <TextView
-            android:id="@+id/statusText"
+            android:id="@+id/pair_StatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Status" />

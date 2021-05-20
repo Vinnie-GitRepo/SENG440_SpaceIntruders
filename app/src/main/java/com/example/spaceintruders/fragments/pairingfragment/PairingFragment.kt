@@ -7,8 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import com.example.spaceintruders.R
 import com.example.spaceintruders.viewmodels.WiFiViewModel
 
@@ -18,6 +21,9 @@ import com.example.spaceintruders.viewmodels.WiFiViewModel
  * create an instance of this fragment.
  */
 class PairingFragment : Fragment() {
+    private lateinit var discoverButton: Button
+    private lateinit var statusText: TextView
+
     private val wifiViewModel: WiFiViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -25,7 +31,21 @@ class PairingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pairing, container, false)
+        val view = inflater.inflate(R.layout.fragment_pairing, container, false)
+
+        // Assign widget values
+        statusText = view.findViewById(R.id.pair_StatusText)
+        discoverButton = view.findViewById(R.id.pair_DiscoverBtn)
+
+        discoverButton.setOnClickListener {
+            discoverPeers()
+        }
+
+        wifiViewModel.connectionStatus.observe(viewLifecycleOwner) { data ->
+            statusText.text = data
+        }
+
+        return view
     }
 
     fun discoverPeers() {
