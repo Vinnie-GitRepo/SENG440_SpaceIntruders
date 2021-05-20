@@ -1,55 +1,50 @@
 package com.example.spaceintruders.viewmodels
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
-import android.os.Looper
+import android.util.Log
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.spaceintruders.services.WiFiDirectBroadcastReceiver
+import com.example.spaceintruders.services.WifiDirectBroadcastReceiver
 
-class WiFiViewModel(application: Application) : AndroidViewModel(application), WiFiDirectBroadcastReceiver.WifiBroadcastListener {
+class WifiViewModel(application: Application) : AndroidViewModel(application), WifiDirectBroadcastReceiver.WifiBroadcastListener {
+    // Constants
+
+
     // Private variables
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
 
     private lateinit var receiver: BroadcastReceiver
-    private lateinit var intentFilter: IntentFilter
 
     // Observable Variables
     private var _peers: MutableLiveData<MutableList<WifiP2pDevice>> = MutableLiveData(mutableListOf())
     val peers: LiveData<MutableList<WifiP2pDevice>>
         get() = _peers
 
-    private var _connected = MutableLiveData<Boolean>()
-    val connected: LiveData<Boolean>
+    private var _connected = MutableLiveData<Int>()
+    val connected: LiveData<Int>
         get() = _connected
-
-    private var _connectionStatus: MutableLiveData<String> = MutableLiveData("")
-    val connectionStatus: LiveData<String>
-        get() = _connectionStatus
-
 
     // Functions
     init {
-        intentFilter = IntentFilter()
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
+
     }
 
-    fun initialiseManager(manager: WifiP2pManager, channel: WifiP2pManager.Channel) {
+    fun initialiseManager(manager: WifiP2pManager, channel: WifiP2pManager.Channel, receiver: WifiDirectBroadcastReceiver) {
         this.manager = manager
         this.channel = channel
-        receiver = WiFiDirectBroadcastReceiver(manager, channel, this)
+        this.receiver = receiver
     }
 
     fun discoverPeers(context: Context) {
@@ -60,18 +55,33 @@ class WiFiViewModel(application: Application) : AndroidViewModel(application), W
         ) {
             manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
-                    _connectionStatus.value = "Discovery Started"
+                    _connected.value = DISCOVERING
                 }
 
                 override fun onFailure(reason: Int) {
-                    _connectionStatus.value = "Discovery cannot start"
+                    _connected.value = DISCOVERY_FAILED
                 }
             })
         }
     }
 
+    @SuppressLint("MissingPermission")
+    fun connect(device: WifiP2pDevice) {
+        val config = WifiP2pConfig()
+        config.deviceAddress = device.deviceAddress
+        manager.connect(channel, config, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                _connected.value = CONNECTED
+            }
+
+            override fun onFailure(reason: Int) {
+                _connected.value = CONNECTION_FAILED
+            }
+        })
+    }
+
     override fun notConnected() {
-        _connected.value = false
+        _connected.value = NOT_CONNECTED
     }
 
 
@@ -80,16 +90,26 @@ class WiFiViewModel(application: Application) : AndroidViewModel(application), W
         if (it != peers) {
             _peers.value!!.clear()
             _peers.value!!.addAll(it.deviceList)
+            _peers.value = _peers.value
+
+            Log.d("peers", "hello")
         }
     }
 
     override val connectionInfoListener: WifiP2pManager.ConnectionInfoListener = WifiP2pManager.ConnectionInfoListener {
         val groupOwnerAddress = it.groupOwnerAddress
         if (it.groupFormed && it.isGroupOwner) {
-            _connectionStatus.value = "Group owner"
+            _connected.value = CONNECTED
         } else if (it.groupFormed) {
-            _connectionStatus.value = "Client"
+            _connected.value = CONNECTED
         }
     }
 
+    companion object {
+        const val NOT_CONNECTED = 0
+        const val CONNECTED = 1
+        const val DISCOVERING = 2
+        const val DISCOVERY_FAILED = 3
+        const val CONNECTION_FAILED = 4
+    }
 }

@@ -1,28 +1,23 @@
 package com.example.spaceintruders.fragments.menufragment
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.spaceintruders.R
-import com.example.spaceintruders.activities.MainActivity
 import com.example.spaceintruders.activities.SettingsActivity
-import com.example.spaceintruders.viewmodels.WiFiViewModel
+import com.example.spaceintruders.viewmodels.WifiViewModel
 
 /**
  * Fragment for the Main Menu
  */
 class MenuFragment : Fragment() {
-    private val wifiViewModel: WiFiViewModel by activityViewModels()
+    private val wifiViewModel: WifiViewModel by activityViewModels()
     private lateinit var playButton: Button
     private lateinit var scoreButton: Button
     private lateinit var settingsButton: Button

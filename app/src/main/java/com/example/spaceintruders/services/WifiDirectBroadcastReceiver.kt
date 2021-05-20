@@ -10,7 +10,7 @@ import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pManager
 import androidx.core.app.ActivityCompat
 
-class WiFiDirectBroadcastReceiver(
+class WifiDirectBroadcastReceiver(
     private val manager: WifiP2pManager,
     private val channel: WifiP2pManager.Channel,
     private val wifiBroadcastListener: WifiBroadcastListener

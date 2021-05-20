@@ -2,6 +2,7 @@ package com.example.spaceintruders.fragments.pairingfragment
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,19 +13,24 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
-import com.example.spaceintruders.viewmodels.WiFiViewModel
+import com.example.spaceintruders.viewmodels.WifiViewModel
+import kotlin.math.log
 
 /**
  * A simple [Fragment] subclass.
  * Use the [PairingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PairingFragment : Fragment() {
+class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListener {
     private lateinit var discoverButton: Button
     private lateinit var statusText: TextView
+    private lateinit var peersListView: RecyclerView
+    private val adapter = WifiPeersRecyclerViewAdapter(this)
 
-    private val wifiViewModel: WiFiViewModel by activityViewModels()
+    private val wifiViewModel: WifiViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,14 +42,29 @@ class PairingFragment : Fragment() {
         // Assign widget values
         statusText = view.findViewById(R.id.pair_StatusText)
         discoverButton = view.findViewById(R.id.pair_DiscoverBtn)
+        peersListView = view.findViewById(R.id.peer_recyclerView)
 
         discoverButton.setOnClickListener {
             discoverPeers()
         }
 
-        wifiViewModel.connectionStatus.observe(viewLifecycleOwner) { data ->
-            statusText.text = data
+        wifiViewModel.connected.observe(viewLifecycleOwner) { data ->
+            when (data) {
+                WifiViewModel.CONNECTED -> statusText.text = getString(R.string.peer_connected)
+                WifiViewModel.DISCOVERING -> statusText.text = getString(R.string.peer_discovery_start)
+                WifiViewModel.DISCOVERY_FAILED -> statusText.text = getString(R.string.peer_discovery_fail)
+                WifiViewModel.NOT_CONNECTED -> statusText.text = getString(R.string.peer_discovery_inactive)
+                WifiViewModel.CONNECTION_FAILED -> statusText.text = getString(R.string.peer_connection_fail)
+            }
         }
+
+        wifiViewModel.peers.observe(viewLifecycleOwner) {
+            adapter.setData(it)
+            print("here")
+        }
+
+        peersListView.adapter = adapter
+        peersListView.addItemDecoration(DividerItemDecoration(peersListView.context, DividerItemDecoration.VERTICAL))
 
         return view
     }
@@ -77,5 +98,9 @@ class PairingFragment : Fragment() {
             }
             else -> {}
         }
+    }
+
+    override fun onConnClick(device: WifiP2pDevice) {
+        wifiViewModel.connect(device)
     }
 }
