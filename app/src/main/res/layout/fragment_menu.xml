@@ -18,8 +18,8 @@
             android:id="@+id/home_ScreenImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logoscreentop"
             android:contentDescription="@string/home_ContentDescriptionText"
+            android:src="@drawable/logoscreentop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.444"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -31,28 +31,35 @@
             android:id="@+id/home_PlayButton"
             android:layout_width="206dp"
             android:layout_height="92dp"
+            android:layout_marginTop="388dp"
             android:text="@string/home_PlayButtonText"
             android:textSize="40sp"
-            tools:layout_editor_absoluteX="102dp"
-            tools:layout_editor_absoluteY="238dp" />
+            app:layout_constraintEnd_toEndOf="@+id/home_ScoresButton"
+            app:layout_constraintTop_toTopOf="@+id/home_ScreenImage" />
 
         <Button
             android:id="@+id/home_ScoresButton"
             android:layout_width="206dp"
             android:layout_height="92dp"
+            android:layout_marginTop="5dp"
             android:text="@string/home_ScoresButtonText"
             android:textSize="30sp"
-            tools:layout_editor_absoluteX="102dp"
-            tools:layout_editor_absoluteY="387dp" />
+            app:layout_constraintEnd_toEndOf="@+id/home_SettingsButton"
+            app:layout_constraintTop_toBottomOf="@+id/home_PlayButton" />
 
         <Button
             android:id="@+id/home_SettingsButton"
             android:layout_width="206dp"
             android:layout_height="92dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:text="@string/home_SettingsButtonText"
             android:textSize="30sp"
-            tools:layout_editor_absoluteX="102dp"
-            tools:layout_editor_absoluteY="528dp" />
+            app:layout_constraintBottom_toBottomOf="@+id/home_ScreenImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/home_ScoresButton"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
