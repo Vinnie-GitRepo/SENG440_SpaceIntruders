@@ -1,8 +1,9 @@
-package com.example.spaceintruders
+package com.example.spaceintruders.activities
 
 import android.os.Bundle
 //import android.support.wearable.activity.WearableActivity
 import androidx.appcompat.app.AppCompatActivity
+import com.example.spaceintruders.R
 
 class MainActivity : AppCompatActivity() {
 
