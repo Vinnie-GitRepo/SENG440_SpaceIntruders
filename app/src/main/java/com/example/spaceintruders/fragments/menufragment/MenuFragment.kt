@@ -1,6 +1,7 @@
 package com.example.spaceintruders.fragments.menufragment
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
@@ -13,6 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.example.spaceintruders.R
+import com.example.spaceintruders.activities.MainActivity
+import com.example.spaceintruders.activities.SettingsActivity
 import com.example.spaceintruders.viewmodels.WiFiViewModel
 
 /**
@@ -39,6 +42,11 @@ class MenuFragment : Fragment() {
         playButton.setOnClickListener(
             Navigation.createNavigateOnClickListener(R.id.action_menuFragment_to_pairingFragment, null)
         )
+
+        settingsButton.setOnClickListener {
+            val intent = Intent(requireContext(), SettingsActivity::class.java)
+            startActivity(intent)
+        }
 
         return view
     }
