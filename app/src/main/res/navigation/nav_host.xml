@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_host">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_host"
+    app:startDestination="@id/menuFragment">
 
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.spaceintruders.fragments.menufragment.MenuFragment"
+        android:label="fragment_menu"
+        tools:layout="@layout/fragment_menu" >
+        <action
+            android:id="@+id/action_menuFragment_to_pairingFragment"
+            app:destination="@id/pairingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pairingFragment"
+        android:name="com.example.spaceintruders.fragments.pairingfragment.PairingFragment"
+        android:label="fragment_pairing"
+        tools:layout="@layout/fragment_pairing" >
+        <action
+            android:id="@+id/action_pairingFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.spaceintruders.fragments.gamefragment.GameFragment"
+        android:label="fragment_game"
+        tools:layout="@layout/fragment_game" />
 </navigation>
