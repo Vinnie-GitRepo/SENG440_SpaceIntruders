@@ -37,16 +37,15 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         get() = _connected
 
     // Functions
-    init {
-
-    }
-
     fun initialiseManager(manager: WifiP2pManager, channel: WifiP2pManager.Channel, receiver: WifiDirectBroadcastReceiver) {
         this.manager = manager
         this.channel = channel
         this.receiver = receiver
     }
 
+    /**
+     * Turns on WiFi P2P discovery.
+     */
     fun discoverPeers(context: Context) {
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -65,6 +64,9 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    /**
+     * Connects to a device with WiFi P2P.
+     */
     @SuppressLint("MissingPermission")
     fun connect(device: WifiP2pDevice) {
         val config = WifiP2pConfig()
@@ -80,12 +82,18 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         })
     }
 
+    /**
+     * Function is called by WifiDirectBroadcastReceiver when connection is lost.
+     */
     override fun notConnected() {
         _connected.value = NOT_CONNECTED
     }
 
 
     // Interface values
+    /**
+     * Callback function for when available peers changes.
+     */
     override val peerListListener: WifiP2pManager.PeerListListener = WifiP2pManager.PeerListListener {
         if (it != peers) {
             _peers.value!!.clear()
@@ -96,6 +104,9 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    /**
+     * Callback function for when connected peers changes.
+     */
     override val connectionInfoListener: WifiP2pManager.ConnectionInfoListener = WifiP2pManager.ConnectionInfoListener {
         val groupOwnerAddress = it.groupOwnerAddress
         if (it.groupFormed && it.isGroupOwner) {
@@ -105,6 +116,9 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    /**
+     * Constant values for connection status'.
+     */
     companion object {
         const val NOT_CONNECTED = 0
         const val CONNECTED = 1
