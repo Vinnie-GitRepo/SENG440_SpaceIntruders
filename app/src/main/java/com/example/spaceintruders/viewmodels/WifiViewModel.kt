@@ -16,7 +16,10 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.spaceintruders.services.WifiDirectBroadcastReceiver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -34,6 +37,10 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
 
     private lateinit var socket: Socket
     private lateinit var receiver: BroadcastReceiver
+
+    private lateinit var server: Server
+    private lateinit var client: Client
+    private var groupOwner: Boolean = false
 
     // Observable Variables
     private var _instruction: MutableLiveData<String> = MutableLiveData()
@@ -53,6 +60,17 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         this.manager = manager
         this.channel = channel
         this.receiver = receiver
+    }
+
+    fun sendMessage(message: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("sendMessage", "Sending message")
+            if (groupOwner) {
+                server.write(message.toByteArray())
+            } else {
+                client.write(message.toByteArray())
+            }
+        }
     }
 
     /**
@@ -122,9 +140,17 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
     override val connectionInfoListener: WifiP2pManager.ConnectionInfoListener = WifiP2pManager.ConnectionInfoListener {
         val groupOwnerAddress = it.groupOwnerAddress
         if (it.groupFormed && it.isGroupOwner) {
+            groupOwner = true
             _connected.value = CONNECTED
+            server = Server()
+            server.start()
+            Log.d("Wifi", "Owner")
         } else if (it.groupFormed) {
+            groupOwner = false
             _connected.value = CONNECTED
+            client = Client(groupOwnerAddress)
+            client.start()
+            Log.d("Wifi", "Client")
         }
     }
 
@@ -138,6 +164,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
 
         fun write(bytes: ByteArray) {
+            Log.d("Write", String(bytes))
             outputStream.write(bytes)
         }
 
@@ -165,6 +192,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                             val runnable = Runnable {
                                 val tempMSG = String(buffer, 0, finalBytes)
                                 _instruction.value = tempMSG
+                                Log.d("Valueinst", tempMSG)
                             }
                             handler.post(runnable)
                         }
@@ -182,6 +210,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         private lateinit var outputStream: OutputStream
 
         fun write(bytes: ByteArray) {
+            Log.d("Write", String(bytes))
             outputStream.write(bytes)
         }
 
@@ -210,6 +239,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                             val runnable = Runnable {
                                 val tempMSG = String(buffer, 0, finalBytes)
                                 _instruction.value = tempMSG
+                                Log.d("Valueinst", tempMSG)
                             }
                             handler.post(runnable)
                         }

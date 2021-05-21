@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,10 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
     private val adapter = WifiPeersRecyclerViewAdapter(this)
 
     private val wifiViewModel: WifiViewModel by activityViewModels()
+
+    // TODO this is test stuff here
+    private lateinit var receive: TextView
+    private lateinit var send: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,7 +71,21 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         peersListView.adapter = adapter
         peersListView.addItemDecoration(DividerItemDecoration(peersListView.context, DividerItemDecoration.VERTICAL))
 
+        testItems(view)
+
         return view
+    }
+
+    fun testItems(view: View) {
+        receive = view.findViewById(R.id.receive)
+        send = view.findViewById(R.id.send)
+        send.setOnClickListener {
+            Log.d("Here", "here")
+            wifiViewModel.sendMessage("hello there!")
+        }
+        wifiViewModel.instruction.observe(viewLifecycleOwner) {
+            receive.text = it
+        }
     }
 
     fun discoverPeers() {
