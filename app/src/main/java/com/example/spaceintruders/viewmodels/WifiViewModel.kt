@@ -5,29 +5,41 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.spaceintruders.services.WifiDirectBroadcastReceiver
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.ServerSocket
+import java.net.Socket
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class WifiViewModel(application: Application) : AndroidViewModel(application), WifiDirectBroadcastReceiver.WifiBroadcastListener {
-    // Constants
-
-
     // Private variables
     private lateinit var manager: WifiP2pManager
     private lateinit var channel: WifiP2pManager.Channel
 
+    private lateinit var socket: Socket
     private lateinit var receiver: BroadcastReceiver
 
     // Observable Variables
+    private var _instruction: MutableLiveData<String> = MutableLiveData()
+    val instruction: LiveData<String>
+        get() = _instruction
+
     private var _peers: MutableLiveData<MutableList<WifiP2pDevice>> = MutableLiveData(mutableListOf())
     val peers: LiveData<MutableList<WifiP2pDevice>>
         get() = _peers
@@ -113,6 +125,99 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
             _connected.value = CONNECTED
         } else if (it.groupFormed) {
             _connected.value = CONNECTED
+        }
+    }
+
+    inner class Client(hostAddress: InetAddress) : Thread() {
+        private lateinit var inputStream: InputStream
+        private lateinit var outputStream: OutputStream
+        var hostAdd: String = hostAddress.hostAddress
+
+        init {
+            socket = Socket()
+        }
+
+        fun write(bytes: ByteArray) {
+            outputStream.write(bytes)
+        }
+
+        override fun run() {
+            try {
+                socket.connect(InetSocketAddress(hostAdd, 8888), 500)
+                inputStream = socket.getInputStream()
+                outputStream = socket.getOutputStream()
+            } catch (e : IOException) {
+                e.printStackTrace()
+            }
+
+            val executor: ExecutorService = Executors.newSingleThreadExecutor()
+            val handler = Handler(Looper.getMainLooper())
+
+            executor.run {
+                val buffer = ByteArray(1024)
+                var bytes : Int
+
+                while (socket != null) {
+                    try {
+                        bytes = inputStream.read(buffer)
+                        if (bytes > 0) {
+                            val finalBytes = bytes
+                            val runnable = Runnable {
+                                val tempMSG = String(buffer, 0, finalBytes)
+                                _instruction.value = tempMSG
+                            }
+                            handler.post(runnable)
+                        }
+                    } catch (e : IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+    }
+
+    inner class Server() : Thread() {
+        lateinit var serverSocket: ServerSocket
+        private lateinit var inputStream: InputStream
+        private lateinit var outputStream: OutputStream
+
+        fun write(bytes: ByteArray) {
+            outputStream.write(bytes)
+        }
+
+        override fun run() {
+            try {
+                serverSocket = ServerSocket(8888)
+                socket = serverSocket.accept()
+                inputStream = socket.getInputStream()
+                outputStream = socket.getOutputStream()
+            } catch (e : IOException) {
+                e.printStackTrace()
+            }
+
+            val executor: ExecutorService = Executors.newSingleThreadExecutor()
+            val handler = Handler(Looper.getMainLooper())
+
+            executor.run {
+                val buffer = ByteArray(1024)
+                var bytes : Int
+
+                while(socket!=null) {
+                    try {
+                        bytes = inputStream.read(buffer)
+                        if (bytes > 0) {
+                            val finalBytes = bytes
+                            val runnable = Runnable {
+                                val tempMSG = String(buffer, 0, finalBytes)
+                                _instruction.value = tempMSG
+                            }
+                            handler.post(runnable)
+                        }
+                    } catch (e : IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
         }
     }
 
