@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
@@ -79,10 +80,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
     fun testItems(view: View) {
         receive = view.findViewById(R.id.receive)
         send = view.findViewById(R.id.send)
-        send.setOnClickListener {
-            Log.d("Here", "here")
-            wifiViewModel.sendMessage("hello there!")
-        }
+        send.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_pairingFragment_to_gameFragment))
         wifiViewModel.instruction.observe(viewLifecycleOwner) {
             receive.text = it
         }

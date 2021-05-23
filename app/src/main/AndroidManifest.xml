@@ -19,6 +19,7 @@
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/Theme.AppCompat"/>
+
         <activity
             android:name=".activities.SplashScreen"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -28,6 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"/>

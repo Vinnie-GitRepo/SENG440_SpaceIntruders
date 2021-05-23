@@ -1,40 +1,64 @@
 package com.example.spaceintruders.fragments.gamefragment
 
+import android.app.Activity
+import android.graphics.Insets
+import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.fragment.app.Fragment
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.spaceintruders.R
 import com.example.spaceintruders.viewmodels.WifiViewModel
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+
 
 /**
- * A simple [Fragment] subclass.
- * Use the [GameFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * Fragment that represents game.
  */
 class GameFragment : Fragment() {
     private val wifiViewModel: WifiViewModel by activityViewModels()
+    private lateinit var gameSurfaceView: GameSurfaceView
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game, container, false)
+        val point = getScreenDimensions(requireActivity())
+        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y)
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return gameSurfaceView
+    }
 
+    /**
+     * Gets dimensions of screen.
+     * @return Point object containing width and height of screen.
+     */
+    private fun getScreenDimensions(activity: Activity): Point {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            Point(windowMetrics.bounds.width(), windowMetrics.bounds.height())
+        } else {
+            val displayMetrics = DisplayMetrics()
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            Point(displayMetrics.widthPixels, displayMetrics.heightPixels)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        gameSurfaceView.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        gameSurfaceView.resume()
+    }
 }
