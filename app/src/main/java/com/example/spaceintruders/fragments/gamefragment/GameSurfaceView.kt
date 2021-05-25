@@ -2,17 +2,28 @@ package com.example.spaceintruders.fragments.gamefragment
 
 import android.content.Context
 import android.graphics.Paint
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.view.SurfaceView
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.spaceintruders.gameentities.GameBackground
+import com.example.spaceintruders.gameentities.PlayerEntity
+import kotlin.math.absoluteValue
 
-class GameSurfaceView(context: Context, screenX: Int, screenY: Int) : SurfaceView(context), Runnable {
+class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : SurfaceView(context), Runnable {
     private lateinit var thread: Thread
     private var running: Boolean = false
-    private var paint: Paint = Paint()
-    private var screenRatioX: Float = 0f
-    private var screenRatioY: Float = 0f
+    private val paint: Paint = Paint()
+    val screenRatioX: Float = 0f
+    val screenRatioY: Float = 0f
+    val screenScaleX: Float = screenX / 1000f
+    val screenScaleY: Float = screenY / 1000f
+    var flat: Float = 0f
 
-    private var backgroud: GameBackground = GameBackground(screenX, screenY, resources)
+    private val background: GameBackground = GameBackground(screenX, screenY, resources)
+    private val player: PlayerEntity = PlayerEntity(screenX, screenY, resources)
 
     override fun run() {
         while (running) {
@@ -23,14 +34,17 @@ class GameSurfaceView(context: Context, screenX: Int, screenY: Int) : SurfaceVie
     }
 
     fun update() {
-
+        player.position = flat
     }
+
 
     fun draw() {
         if (holder.surface.isValid) {
             val canvas = holder.lockCanvas()
-            canvas.drawBitmap(backgroud.background, backgroud.x.toFloat(), backgroud.y.toFloat(), paint)
+            canvas.drawBitmap(background.background, background.x.toFloat(), background.y.toFloat(), paint)
 
+//            canvas.drawBitmap(player.image, player.x.toFloat(), player.y.toFloat(), paint)
+            player.draw(canvas)
             holder.unlockCanvasAndPost(canvas)
         }
     }
@@ -47,6 +61,7 @@ class GameSurfaceView(context: Context, screenX: Int, screenY: Int) : SurfaceVie
         running = true
         thread = Thread(this)
         thread.start()
+
     }
 
     fun pause() {
