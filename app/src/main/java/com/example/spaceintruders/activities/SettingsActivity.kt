@@ -2,14 +2,15 @@ package com.example.spaceintruders.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import com.example.spaceintruders.R
 
 class SettingsActivity : AppCompatActivity() {
 
-    var username = ""
-    var colour = ""
+    var username: String =  ""
+    var colour: String = "#FFFFFF"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +24,9 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    fun saveSettings(){
-        val sharedPref = activity?.getSharedPreferences("profile_settings", Context.MODE_PRIVATE)?: return
+
+    fun saveSettings(view: View) {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {
             putString("name", username)
             putString("colour", colour)
@@ -32,11 +34,13 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    fun loadSettings(){
-        val sharedPref = activity?.getSharedPreferences("profile_settings", Context.MODE_PRIVATE)?: return
-        username = sharedPref.getString("name", "username")
-        colour = sharedPref.getString("colour", "white")
+    fun loadSettings(view: View) {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        username = sharedPref.getString("name", "username").orEmpty()
+        colour = sharedPref.getString("colour", "#FFFFFF").orEmpty()
+
     }
+
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
