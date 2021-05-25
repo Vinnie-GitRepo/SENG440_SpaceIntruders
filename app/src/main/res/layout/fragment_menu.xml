@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
+    android:background="@drawable/bigstarsmobile"
     tools:context=".activities.MainActivity"
     tools:deviceIds="wear">
 
@@ -19,23 +20,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/home_ContentDescriptionText"
-            android:src="@drawable/logoscreentop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.444"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            android:src="@drawable/intruderlogo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/home_PlayButton"
             android:layout_width="206dp"
             android:layout_height="92dp"
-            android:layout_marginTop="388dp"
             android:text="@string/home_PlayButtonText"
             android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="@+id/home_ScoresButton"
-            app:layout_constraintTop_toTopOf="@+id/home_ScreenImage" />
+            app:layout_constraintTop_toBottomOf="@+id/home_ScreenImage" />
 
         <Button
             android:id="@+id/home_ScoresButton"
@@ -44,22 +41,19 @@
             android:layout_marginTop="5dp"
             android:text="@string/home_ScoresButtonText"
             android:textSize="30sp"
-            app:layout_constraintEnd_toEndOf="@+id/home_SettingsButton"
-            app:layout_constraintTop_toBottomOf="@+id/home_PlayButton" />
-
-        <Button
-            android:id="@+id/home_SettingsButton"
-            android:layout_width="206dp"
-            android:layout_height="92dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="@string/home_SettingsButtonText"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toBottomOf="@+id/home_ScreenImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home_ScoresButton"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/home_PlayButton" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/home_SettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_settings_24" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
