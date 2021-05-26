@@ -36,8 +36,7 @@ class GameFragment : Fragment() {
         }
 
         override fun onSensorChanged(event: SensorEvent) {
-            gameSurfaceView.flat = (event.values[0] / -9.81f) + 0.5f
-
+            gameSurfaceView.tilt = ((event.values[0] / -9.81f) + 0.5f).coerceIn(0f, 1f)
         }
     }
 

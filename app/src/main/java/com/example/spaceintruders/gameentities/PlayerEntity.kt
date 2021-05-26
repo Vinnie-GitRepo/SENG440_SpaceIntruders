@@ -8,15 +8,12 @@ import android.util.Log
 import com.example.spaceintruders.R
 
 class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Resources) : Drawable() {
-    private var x: Int = 0
-    private val y: Int = screenY
     private var height: Int = 0
     private var width: Int = 0
     private val paint: Paint = Paint()
+    private var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.player_image)
 
     var position: Float = 0f
-
-    var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.player_image)
 
     init {
         width = screenX/10
