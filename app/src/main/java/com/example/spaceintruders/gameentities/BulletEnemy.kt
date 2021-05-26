@@ -1,10 +1,12 @@
 package com.example.spaceintruders.gameentities
 
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import com.example.spaceintruders.R
 
-class BulletSmallEntity(screenX: Int, screenY: Int, res: Resources, startPositionX: Float) : Bullet(screenX, screenY, startPositionX, 0.95f) {
+class BulletEnemy(screenX: Int, screenY: Int, res: Resources, startPositionY: Float): Bullet(screenX, screenY, startPositionY, 0.05f) {
     private var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.small_bullet)
 
     init {
@@ -15,7 +17,7 @@ class BulletSmallEntity(screenX: Int, screenY: Int, res: Resources, startPositio
     }
 
     override fun updatePosition() {
-        positionY -= 0.01f
+        positionY += 0.01f
     }
 
     override fun draw(canvas: Canvas) {

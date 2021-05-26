@@ -37,13 +37,13 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
         }
     }
 
-    fun shoot() {
+    private fun shoot() {
         Thread(Runnable {
             bullets.addBullet(BulletSmallEntity(screenX, screenY, resources, tilt))
         }).start()
     }
 
-    fun handleDown(event: MotionEvent?) {
+    private fun handleDown(event: MotionEvent?) {
         if (event?.actionMasked == MotionEvent.ACTION_DOWN) {
             shoot()
         }
@@ -58,7 +58,7 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
     private fun update() {
         player.position = tilt
         for (bullet in bullets.getBulletCopy()) {
-            if (bullet.position < 1) {
+            if (bullet.positionY < 1) {
                 bullet.updatePosition()
             } else {
                 bullets.deleteBullet(bullet)
