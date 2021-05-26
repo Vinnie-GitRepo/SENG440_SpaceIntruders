@@ -10,15 +10,19 @@ import androidx.preference.PreferenceManager
 import com.example.spaceintruders.R
 import com.example.spaceintruders.activities.SettingsActivity
 
-class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Resources) : Drawable() {
+class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Resources, context: Context) : Drawable() {
     private var height: Int = 0
     private var width: Int = 0
     private val paint: Paint = Paint()
     private var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.player_image)
-
+    private var color: Int
     var position: Float = 0f
 
     init {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        color = sharedPref.getInt("colour", Color.rgb(255, 255, 255))
+        colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+
         width = screenX/10
         height = screenX/10
 
@@ -26,6 +30,7 @@ class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Reso
     }
 
     override fun draw(canvas: Canvas) {
+        mutate()
         canvas.drawBitmap(image, (screenX.toFloat()*position)-(width/2), screenY.toFloat()-height, paint)
     }
 
@@ -34,7 +39,7 @@ class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Reso
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
-
+        paint.colorFilter = colorFilter
     }
 
     override fun getOpacity(): Int {

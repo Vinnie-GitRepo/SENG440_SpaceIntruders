@@ -20,7 +20,7 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
     private val bullets: BulletCollection = BulletCollection()
 
     private val background: GameBackground = GameBackground(screenX, screenY, resources)
-    private val player: PlayerEntity = PlayerEntity(screenX, screenY, resources)
+    private val player: PlayerEntity = PlayerEntity(screenX, screenY, resources, context)
 
     init {
         setWillNotDraw(false)

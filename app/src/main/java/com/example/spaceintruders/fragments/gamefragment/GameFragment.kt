@@ -2,6 +2,7 @@ package com.example.spaceintruders.fragments.gamefragment
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Insets
 import android.graphics.Point
 import android.graphics.Rect
@@ -19,6 +20,7 @@ import android.view.WindowInsets
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.preference.PreferenceManager
 import com.example.spaceintruders.viewmodels.WifiViewModel
 import kotlin.math.absoluteValue
 
@@ -48,8 +50,12 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+
+
         val point = getScreenDimensions(requireActivity())
         gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y)
+        gameSurfaceView
     }
 
     override fun onCreateView(
