@@ -35,6 +35,13 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
 
     fun update() {
         player.position = flat
+        print(flat)
+        if(flat < 0.05){
+            player.position = 0.05f
+        }
+        if(flat > 0.95){
+            player.position = 0.95f
+        }
     }
 
 
