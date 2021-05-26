@@ -1,11 +1,14 @@
 package com.example.spaceintruders.gameentities
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.example.spaceintruders.R
+import com.example.spaceintruders.activities.SettingsActivity
 
 class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Resources) : Drawable() {
     private var x: Int = 0

@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.apandroid.colorwheel.ColorWheel
 import com.example.spaceintruders.R
 
@@ -57,7 +58,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun saveSettings(view: View) {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         with(sharedPref.edit()) {
             putInt("colour", colour)
             commit()
@@ -65,7 +66,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun loadSettings(view: View) {
-        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         colour = sharedPref.getInt("colour", Color.rgb(255, 255, 255))
     }
 
