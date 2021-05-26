@@ -38,4 +38,5 @@
     <string name="settingsTitle">Settings</string>
     <string name="dark_mode_label">Dark Mode</string>
     <string name="username_label">Username</string>
+    <string name="save_settings_button_text">Save Colour</string>
 </resources>

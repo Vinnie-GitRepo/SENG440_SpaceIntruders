@@ -1,27 +1,28 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="Settings">
 
         <EditTextPreference
-            app:key="Nickname"
-            app:title="Nickname"
+            app:key="username"
+            app:title="Username"
             app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="Placeholder"
-            app:useSimpleSummaryProvider="true" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="Placeholder">
 
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="Placeholder" />
+            app:key="darkswitch"
+            app:title="Dark Mode" />
+
+        <SwitchPreferenceCompat
+            app:key="notificationswitch"
+            app:title="Notifications" />
+
+<!--        <ListPreference-->
+<!--            app:defaultValue="reply"-->
+<!--            app:entries="@array/reply_entries"-->
+<!--            app:entryValues="@array/reply_values"-->
+<!--            app:key="reply"-->
+<!--            app:title="Placeholder"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
     </PreferenceCategory>
 
