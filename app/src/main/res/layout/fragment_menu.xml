@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/box_inset_layout_padding"
     android:background="@drawable/bigstarsmobile"
+    android:padding="@dimen/box_inset_layout_padding"
     tools:context=".activities.MainActivity"
     tools:deviceIds="wear">
 
@@ -27,6 +27,7 @@
 
         <Button
             android:id="@+id/home_PlayButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="206dp"
             android:layout_height="92dp"
             android:text="@string/home_PlayButtonText"
@@ -45,12 +46,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/home_PlayButton" />
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/home_SettingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
+            app:backgroundTint="@color/purple_300"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_settings_24" />

@@ -1,7 +1,6 @@
-package com.example.spaceintruders.gameentities
+package com.example.spaceintruders.util
 
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReadWriteLock
+import com.example.spaceintruders.gameentities.Bullet
 import java.util.concurrent.locks.ReentrantLock
 
 /**

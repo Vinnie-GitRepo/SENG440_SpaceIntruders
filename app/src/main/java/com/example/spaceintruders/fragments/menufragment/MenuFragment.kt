@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import com.example.spaceintruders.R
 import com.example.spaceintruders.activities.SettingsActivity
 import com.example.spaceintruders.viewmodels.WifiViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
  * Fragment for the Main Menu
@@ -20,7 +21,7 @@ class MenuFragment : Fragment() {
     private val wifiViewModel: WifiViewModel by activityViewModels()
     private lateinit var playButton: Button
     private lateinit var scoreButton: Button
-    private lateinit var settingsButton: Button
+    private lateinit var settingsButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

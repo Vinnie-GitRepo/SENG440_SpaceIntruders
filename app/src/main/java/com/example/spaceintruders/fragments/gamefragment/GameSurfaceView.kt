@@ -3,14 +3,10 @@ package com.example.spaceintruders.fragments.gamefragment
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
-import android.view.View
 import com.example.spaceintruders.gameentities.*
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.internal.SynchronizedObject
-import java.util.*
+import com.example.spaceintruders.util.BulletCollection
 
 class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : SurfaceView(context) {
     private lateinit var thread: Thread
