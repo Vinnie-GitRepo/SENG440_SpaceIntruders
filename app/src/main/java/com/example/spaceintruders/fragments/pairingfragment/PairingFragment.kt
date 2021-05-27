@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
@@ -66,7 +67,12 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
 
         wifiViewModel.peers.observe(viewLifecycleOwner) {
             adapter.setData(it)
-            print("here")
+        }
+
+        wifiViewModel.instruction.observe(viewLifecycleOwner) {
+            if (it == "ready" && wifiViewModel.connected.value == WifiViewModel.CONNECTED) {
+                Navigation.findNavController(view).navigate(R.id.action_pairingFragment_to_gameFragment)
+            }
         }
 
         peersListView.adapter = adapter

@@ -60,6 +60,7 @@ class GameFragment : Fragment() {
                 val number = instruction.removePrefix("bullet")
                 Log.i("Instruction parser", number)
                 gameSurfaceView.enemyShoot(number.toFloat())
+                wifiViewModel.resetInstruction()
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }

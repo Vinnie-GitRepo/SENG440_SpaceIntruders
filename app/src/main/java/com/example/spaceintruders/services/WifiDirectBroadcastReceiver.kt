@@ -39,8 +39,6 @@ class WifiDirectBroadcastReceiver(
                 ) {
                     manager.requestPeers(channel, wifiBroadcastListener.peerListListener)
                 }
-
-
             }
             WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                 // Connection state changed! We should probably do something about
