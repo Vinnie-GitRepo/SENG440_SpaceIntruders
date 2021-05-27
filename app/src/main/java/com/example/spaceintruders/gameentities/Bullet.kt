@@ -20,6 +20,8 @@ abstract class Bullet(protected val screenX: Int, protected val screenY: Int, va
      */
     abstract fun updatePosition()
 
+    abstract fun travelComplete() : Boolean
+
     // Overriding methods from Drawable that aren't used.
     override fun setAlpha(alpha: Int) {}
 

@@ -5,10 +5,13 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.SurfaceView
+import androidx.fragment.app.activityViewModels
 import com.example.spaceintruders.gameentities.*
 import com.example.spaceintruders.util.BulletCollection
+import com.example.spaceintruders.viewmodels.GameViewModel
+import com.example.spaceintruders.viewmodels.WifiViewModel
 
-class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : SurfaceView(context) {
+class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, private val wifiModel: WifiViewModel, private val gameViewModel: GameViewModel) : SurfaceView(context) {
     private lateinit var thread: Thread
     private var running: Boolean = false
     private val paint: Paint = Paint()
@@ -34,16 +37,15 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
     }
 
     private fun shoot() {
-        Thread(Runnable {
+        Thread {
             bullets.addBullet(BulletSmallEntity(screenX, screenY, resources, tilt))
-        }).start()
+        }.start()
     }
 
     private fun handleDown(event: MotionEvent?) {
         if (event?.actionMasked == MotionEvent.ACTION_DOWN) {
             shoot()
         }
-
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -54,9 +56,14 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int) : Su
     private fun update() {
         player.position = tilt
         for (bullet in bullets.getBulletCopy()) {
-            if (bullet.positionY < 1) {
+            if (!bullet.travelComplete()) {
                 bullet.updatePosition()
             } else {
+                if (bullet is BulletEnemy) {
+                    gameViewModel.enemyScored()
+                    print("enemy scored")
+                    print(gameViewModel.scoreVisitPlayer)
+                }
                 bullets.deleteBullet(bullet)
             }
         }

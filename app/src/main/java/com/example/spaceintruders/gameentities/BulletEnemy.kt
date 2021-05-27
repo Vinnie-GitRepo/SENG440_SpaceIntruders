@@ -7,7 +7,7 @@ import android.graphics.Canvas
 import com.example.spaceintruders.R
 
 class BulletEnemy(screenX: Int, screenY: Int, res: Resources, startPositionY: Float): Bullet(screenX, screenY, startPositionY, 0.05f) {
-    private var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.small_bullet)
+    private var image: Bitmap = BitmapFactory.decodeResource(res, R.drawable.big_bullet)
 
     init {
         width = screenX/10
@@ -17,7 +17,11 @@ class BulletEnemy(screenX: Int, screenY: Int, res: Resources, startPositionY: Fl
     }
 
     override fun updatePosition() {
-        positionY += 0.01f
+        positionY += 0.005f
+    }
+
+    override fun travelComplete(): Boolean {
+        return positionY > 1
     }
 
     override fun draw(canvas: Canvas) {

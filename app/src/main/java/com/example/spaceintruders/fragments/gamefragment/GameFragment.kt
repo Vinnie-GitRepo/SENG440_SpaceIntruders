@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
+import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 import kotlin.math.absoluteValue
 
@@ -30,6 +31,8 @@ import kotlin.math.absoluteValue
  */
 class GameFragment : Fragment() {
     private val wifiViewModel: WifiViewModel by activityViewModels()
+    private val gameViewModel: GameViewModel by activityViewModels()
+
     private lateinit var gameSurfaceView: GameSurfaceView
     private lateinit var sensorManager: SensorManager
 
@@ -50,11 +53,8 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-
         val point = getScreenDimensions(requireActivity())
-        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y)
+        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, wifiViewModel, gameViewModel)
         gameSurfaceView
     }
 
