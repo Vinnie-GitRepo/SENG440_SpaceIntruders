@@ -8,6 +8,14 @@ import androidx.room.PrimaryKey
  * Stores the names of the players who played the game and their scores.
  */
 @Entity
-class GameRecord {
-//    @PrimaryKey val id: Int
-}
+data class GameRecord(
+    @PrimaryKey val id: Int,
+
+    //  Phone owner details
+    val homePlayerName: String,
+    val homePlayerScore: Int,
+
+    //  Opponent details
+    val visitPlayerName: String,
+    val visitPlayerScore: Int
+)
