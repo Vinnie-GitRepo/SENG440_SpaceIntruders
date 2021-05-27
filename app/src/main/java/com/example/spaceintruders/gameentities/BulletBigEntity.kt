@@ -17,7 +17,7 @@ class BulletBigEntity(screenX: Int, screenY: Int, res: Resources, startPositionX
     }
 
     override fun updatePosition() {
-        positionY -= -0.005f
+        positionY -= 0.005f
     }
 
     override fun travelComplete(): Boolean {

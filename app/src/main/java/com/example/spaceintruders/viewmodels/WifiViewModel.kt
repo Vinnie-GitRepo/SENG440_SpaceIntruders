@@ -17,6 +17,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.spaceintruders.gameentities.Bullet
 import com.example.spaceintruders.services.WifiDirectBroadcastReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,15 +63,9 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         this.receiver = receiver
     }
 
-    fun sendMessage(message: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("sendMessage", "Sending message")
-            if (groupOwner) {
-                server.write(message.toByteArray())
-            } else {
-                client.write(message.toByteArray())
-            }
-        }
+    fun sendBullet(bullet: Bullet) {
+        val message = "bullet${bullet.positionX}"
+        sendMessage(message)
     }
 
     /**
@@ -110,6 +105,24 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                 _connected.value = CONNECTION_FAILED
             }
         })
+    }
+
+    /**
+     * Sends a message to paired device.
+     */
+    private fun sendMessage(message: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                Log.d("sendMessage", "Sending message")
+                if (groupOwner) {
+                    server.write(message.toByteArray())
+                } else {
+                    client.write(message.toByteArray())
+                }
+            } catch (e: UninitializedPropertyAccessException) {
+                Log.e("WifiViewModel", "Tried to send message before connection was made.")
+            }
+        }
     }
 
     /**

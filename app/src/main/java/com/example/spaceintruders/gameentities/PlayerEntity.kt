@@ -34,9 +34,7 @@ class PlayerEntity(private val screenX: Int, private val screenY: Int, res: Reso
         canvas.drawBitmap(image, (screenX.toFloat()*position)-(width/2), screenY.toFloat()-height, paint)
     }
 
-    override fun setAlpha(alpha: Int) {
-
-    }
+    override fun setAlpha(alpha: Int) {}
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
         paint.colorFilter = colorFilter

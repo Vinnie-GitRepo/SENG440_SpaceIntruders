@@ -3,6 +3,8 @@ package com.example.spaceintruders.fragments.gamefragment
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
 import androidx.fragment.app.activityViewModels
@@ -25,15 +27,43 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
     private val background: GameBackground = GameBackground(screenX, screenY, resources)
     private val player: PlayerEntity = PlayerEntity(screenX, screenY, resources, context)
 
-    init {
-        setWillNotDraw(false)
-    }
-
+    /**
+     * Runner that updates the game variables.
+     */
     private val runner = Runnable {
         while (running) {
             update()
             sleep()
         }
+    }
+
+    private val flingListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent?,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            // Returns true if the fling was fast enough.
+            if (velocityY < -4000) {
+                return true
+            }
+            return false
+        }
+    }
+    private val flingDetector = GestureDetector(context, flingListener)
+
+    /**
+     * Sets view to automatically draw.
+     */
+    init {
+        setWillNotDraw(false)
+    }
+
+    private fun shootAcross() {
+        Thread {
+            bullets.addBullet(BulletBigEntity(screenX, screenY, resources, tilt))
+        }.start()
     }
 
     private fun shoot() {
@@ -42,15 +72,26 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
         }.start()
     }
 
+    fun enemyShoot(position: Float) {
+        Thread {
+            bullets.addBullet(BulletEnemy(screenX, screenY, resources, position))
+        }.start()
+    }
+
     private fun handleDown(event: MotionEvent?) {
-        if (event?.actionMasked == MotionEvent.ACTION_DOWN) {
+        if (event?.actionMasked == MotionEvent.ACTION_UP) {
             shoot()
         }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        handleDown(event)
-        return true;
+
+        if (flingDetector.onTouchEvent(event)) {
+            shootAcross()
+        } else {
+            handleDown(event)
+        }
+        return true
     }
 
     private fun update() {
@@ -60,9 +101,11 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
                 bullet.updatePosition()
             } else {
                 if (bullet is BulletEnemy) {
+                    Log.d("GameView: Update", "Enemy scored")
                     gameViewModel.enemyScored()
-                    print("enemy scored")
-                    print(gameViewModel.scoreVisitPlayer)
+                } else if (bullet is BulletBigEntity) {
+                    Log.d("GameView: Update", "Big bullet sending")
+                    wifiModel.sendBullet(bullet)
                 }
                 bullets.deleteBullet(bullet)
             }
