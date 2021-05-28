@@ -41,6 +41,9 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
 
     private lateinit var server: Server
     private lateinit var client: Client
+
+    private var initiator: Boolean = false
+    private var ready = false
     private var groupOwner: Boolean = false
 
     // Observable Variables
@@ -63,9 +66,19 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         this.receiver = receiver
     }
 
+    fun sendReady() {
+        Log.d("sendready", "ready")
+        sendMessage("ready")
+        ready = true
+    }
+
     fun sendBullet(bullet: Bullet) {
         val message = "bullet${bullet.positionX}"
         sendMessage(message)
+    }
+
+    fun resetInstruction() {
+        _instruction.value = ""
     }
 
     /**
@@ -89,15 +102,40 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    fun cancelDiscovery() {
+        manager.stopPeerDiscovery(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                _connected.value = NOT_CONNECTED
+            }
+
+            override fun onFailure(reason: Int) {}
+        })
+    }
+
+    fun disconnectPeer() {
+        manager.cancelConnect(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                _connected.value = NOT_CONNECTED
+            }
+
+            override fun onFailure(reason: Int) {
+
+            }
+        })
+    }
+
     /**
      * Connects to a device with WiFi P2P.
      */
     @SuppressLint("MissingPermission")
     fun connect(device: WifiP2pDevice) {
+        _connected.value = CONNECTING
         val config = WifiP2pConfig()
         config.deviceAddress = device.deviceAddress
+        config.groupOwnerIntent = 10000
         manager.connect(channel, config, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
+                initiator = true
                 _connected.value = CONNECTED
             }
 
@@ -132,6 +170,12 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         _connected.value = NOT_CONNECTED
     }
 
+    private fun receive(tempMSG: String) {
+        if (!ready && tempMSG == "ready") {
+            sendReady()
+        }
+        _instruction.value = tempMSG
+    }
 
     // Interface values
     /**
@@ -142,8 +186,6 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
             _peers.value!!.clear()
             _peers.value!!.addAll(it.deviceList)
             _peers.value = _peers.value
-
-            Log.d("peers", "hello")
         }
     }
 
@@ -151,19 +193,21 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
      * Callback function for when connected peers changes.
      */
     override val connectionInfoListener: WifiP2pManager.ConnectionInfoListener = WifiP2pManager.ConnectionInfoListener {
-        val groupOwnerAddress = it.groupOwnerAddress
-        if (it.groupFormed && it.isGroupOwner) {
-            groupOwner = true
-            _connected.value = CONNECTED
-            server = Server()
-            server.start()
-            Log.d("Wifi", "Owner")
-        } else if (it.groupFormed) {
-            groupOwner = false
-            _connected.value = CONNECTED
-            client = Client(groupOwnerAddress)
-            client.start()
-            Log.d("Wifi", "Client")
+        if (it.groupFormed) {
+            val groupOwnerAddress = it.groupOwnerAddress
+            if (it.isGroupOwner) {
+                groupOwner = true
+                _connected.value = CONNECTED
+                server = Server()
+                server.start()
+                Log.d("Wifi", "Owner")
+            } else {
+                groupOwner = false
+                _connected.value = CONNECTED
+                client = Client(groupOwnerAddress)
+                client.start()
+                Log.d("Wifi", "Client")
+            }
         }
     }
 
@@ -193,6 +237,10 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
             val executor: ExecutorService = Executors.newSingleThreadExecutor()
             val handler = Handler(Looper.getMainLooper())
 
+            if (!initiator) {
+                sendReady()
+            }
+
             executor.run {
                 val buffer = ByteArray(1024)
                 var bytes : Int
@@ -204,7 +252,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                             val finalBytes = bytes
                             val runnable = Runnable {
                                 val tempMSG = String(buffer, 0, finalBytes)
-                                _instruction.value = tempMSG
+                                receive(tempMSG)
                                 Log.d("Valueinst", tempMSG)
                             }
                             handler.post(runnable)
@@ -240,6 +288,10 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
             val executor: ExecutorService = Executors.newSingleThreadExecutor()
             val handler = Handler(Looper.getMainLooper())
 
+            if (!initiator) {
+                sendReady()
+            }
+
             executor.run {
                 val buffer = ByteArray(1024)
                 var bytes : Int
@@ -251,7 +303,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                             val finalBytes = bytes
                             val runnable = Runnable {
                                 val tempMSG = String(buffer, 0, finalBytes)
-                                _instruction.value = tempMSG
+                                receive(tempMSG)
                                 Log.d("Valueinst", tempMSG)
                             }
                             handler.post(runnable)
@@ -273,5 +325,6 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         const val DISCOVERING = 2
         const val DISCOVERY_FAILED = 3
         const val CONNECTION_FAILED = 4
+        const val CONNECTING = 5
     }
 }

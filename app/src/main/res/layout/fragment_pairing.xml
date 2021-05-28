@@ -21,41 +21,46 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
             tools:listitem="@layout/peer_item" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <Button
                 android:id="@+id/pair_DiscoverBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Discover Peers" />
+                android:layout_height="0dp"
+                android:backgroundTint="#673AB7"
+                android:text="@string/peer_discover"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/pair_StatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Status" />
+                android:layout_marginStart="5dp"
+                android:text="Status"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/pair_DiscoverBtn"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/send"
+            <ProgressBar
+                android:id="@+id/pairing_progressBar"
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:text="Next screen" />
-
-            <TextView
-                android:id="@+id/receive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-
-        </LinearLayout>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
