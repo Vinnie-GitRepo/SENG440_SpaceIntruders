@@ -20,10 +20,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
@@ -75,6 +78,14 @@ class GameFragment : Fragment() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val backIntercept = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                wifiViewModel.disconnect()
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, backIntercept)
+
         // Create game view
         val point = getScreenDimensions(requireActivity())
         gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, wifiViewModel, gameViewModel)

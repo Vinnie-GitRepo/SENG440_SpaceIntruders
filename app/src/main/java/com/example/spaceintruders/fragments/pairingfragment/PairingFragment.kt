@@ -1,11 +1,14 @@
 package com.example.spaceintruders.fragments.pairingfragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +23,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
+import com.example.spaceintruders.services.WifiDirectBroadcastReceiver
 import com.example.spaceintruders.viewmodels.WifiViewModel
 
 
@@ -116,6 +120,11 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         ) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
+//        wifiViewModel.killConnections()
+        val manager = requireActivity().getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+        val channel = manager.initialize(context, Looper.getMainLooper(), null)
+        val receiver = WifiDirectBroadcastReceiver(manager, channel, wifiViewModel)
+        wifiViewModel.initialiseManager(manager, channel, receiver)
         wifiViewModel.discoverPeers(requireContext())
     }
 
