@@ -8,17 +8,18 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
+import com.example.spaceintruders.services.Endpoint
 
 class WifiPeersRecyclerViewAdapter(private val connectListener: OnConnectListener): RecyclerView.Adapter<WifiPeersRecyclerViewAdapter.ItemViewHolder>() {
-    private var values: List<WifiP2pDevice> = emptyList()
+    val values: ArrayList<Endpoint> = arrayListOf()
 
     class ItemViewHolder(view: View, connectListener: OnConnectListener) : RecyclerView.ViewHolder(view) {
-        lateinit var wifiP2pDevice: WifiP2pDevice
+        lateinit var endpoint: Endpoint
         val deviceNameText: TextView = view.findViewById(R.id.peer_deviceName)
         private val deviceConnect: Button = view.findViewById(R.id.peer_connectBtn)
         init {
             deviceConnect.setOnClickListener {
-                connectListener.onConnClick(wifiP2pDevice)
+                connectListener.onConnClick(endpoint)
             }
         }
     }
@@ -33,16 +34,16 @@ class WifiPeersRecyclerViewAdapter(private val connectListener: OnConnectListene
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.wifiP2pDevice = values[position]
-        holder.deviceNameText.text = values[position].deviceName
+        holder.endpoint = values[position]
+        holder.deviceNameText.text = values[position].name
     }
 
-    fun setData(data: List<WifiP2pDevice>) {
-        values = data
-        notifyDataSetChanged()
-    }
+//    fun setData(data: List<Endpoint>) {
+//        values = data
+//        notifyDataSetChanged()
+//    }
 
     interface OnConnectListener {
-        fun onConnClick(device: WifiP2pDevice)
+        fun onConnClick(device: Endpoint)
     }
 }

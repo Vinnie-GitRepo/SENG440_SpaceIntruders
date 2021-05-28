@@ -1,17 +1,18 @@
 package com.example.spaceintruders.fragments.pairingfragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -20,7 +21,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
+import com.example.spaceintruders.activities.MainActivity
+import com.example.spaceintruders.services.Endpoint
 import com.example.spaceintruders.viewmodels.WifiViewModel
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.connection.*
 
 
 /**
@@ -35,7 +40,41 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
     private lateinit var loadingCircle: ProgressBar
     private val adapter = WifiPeersRecyclerViewAdapter(this)
 
-    private val wifiViewModel: WifiViewModel by activityViewModels()
+    private val payloadListener = object : PayloadCallback() {
+        override fun onPayloadReceived(endpoint: String, payload: Payload) {}
+        override fun onPayloadTransferUpdate(endpoint: String, update: PayloadTransferUpdate) {}
+    }
+
+    private val connectionListener = object : ConnectionLifecycleCallback() {
+        override fun onConnectionInitiated(id: String, info: ConnectionInfo) {
+            Nearby.getConnectionsClient(requireActivity()).acceptConnection(id, payloadListener)
+        }
+
+        override fun onConnectionResult(endpoint: String, result: ConnectionResolution) {
+            when (result.status.statusCode) {
+                ConnectionsStatusCodes.STATUS_OK -> {
+                }
+                ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
+                }
+                ConnectionsStatusCodes.STATUS_ERROR -> {
+                }
+            }
+        }
+
+        override fun onDisconnected(endpoint: String) {
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        requireActivity().requestPermissions(permissions, 100{
+            advertise()
+        }, {
+            Toast.makeText(this, "Location not permitted.", Toast.LENGTH_LONG).show()
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,53 +92,8 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         loadingCircle.visibility = View.INVISIBLE
 
         discoverButton.setOnClickListener {
-            discoverPeers()
-        }
-
-        wifiViewModel.connected.observe(viewLifecycleOwner) { data ->
-            when (data) {
-                WifiViewModel.CONNECTING -> {
-                    statusText.text = getString(R.string.connecting)
-                    loadingCircle.visibility = View.VISIBLE
-                    val color = -0x5fa81b
-                    loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-                }
-                WifiViewModel.DISCOVERING -> {
-                    statusText.text = getString(R.string.peer_discovery_start)
-                    loadingCircle.visibility = View.VISIBLE
-                    val color = -0x1b98a8
-                    loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-                }
-                WifiViewModel.CONNECTED -> {
-                    statusText.text = getString(R.string.connecting)
-                    loadingCircle.visibility = View.VISIBLE
-                    val color = -0x5fa81b
-                    loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-                }
-                WifiViewModel.DISCOVERY_FAILED -> {
-                    statusText.text = getString(R.string.peer_discovery_fail)
-                    loadingCircle.visibility = View.INVISIBLE
-                }
-                WifiViewModel.NOT_CONNECTED -> {
-                    statusText.text = getString(R.string.peer_discovery_inactive)
-                    loadingCircle.visibility = View.INVISIBLE
-                }
-                WifiViewModel.CONNECTION_FAILED -> {
-                    statusText.text = getString(R.string.peer_connection_fail)
-                    loadingCircle.visibility = View.INVISIBLE
-                }
-            }
-        }
-
-        wifiViewModel.peers.observe(viewLifecycleOwner) {
-            adapter.setData(it)
-        }
-
-        wifiViewModel.instruction.observe(viewLifecycleOwner) {
-            if (it == "ready" && wifiViewModel.connected.value == WifiViewModel.CONNECTED) {
-                Navigation.findNavController(view).navigate(R.id.action_pairingFragment_to_gameFragment)
-                wifiViewModel.resetInstruction()
-            }
+            advertise()
+            discover()
         }
 
         peersListView.adapter = adapter
@@ -108,15 +102,61 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         return view
     }
 
-    fun discoverPeers() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+//    fun discoverPeers() {
+//        if (ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+//        }
+//
+//    }
+
+    private fun advertise() {
+        val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
+        Nearby.getConnectionsClient(requireActivity()).startAdvertising("Ben", "P2Piano", connectionListener, options)
+            .addOnSuccessListener {
+                Log.d("Success", "Success")
+            }.addOnFailureListener {
+                Log.d("failure", "failure")
+            }
+    }
+
+    private fun discover() {
+        val callback = createDiscoverListener(adapter)
+
+        val options = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
+        Nearby.getConnectionsClient(requireActivity()).startDiscovery("P2Piano", callback, options).addOnSuccessListener {
+            Log.d("Success", "Success")
+        }.addOnFailureListener {
+
         }
-        wifiViewModel.discoverPeers(requireContext())
+    }
+
+    private fun joinHost(endpoint: Endpoint) {
+        Nearby.getConnectionsClient(requireActivity())
+            .requestConnection("CLIENT", endpoint.id, connectionListener)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Connected to ${endpoint.name}.", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Rejected by ${endpoint.name}.", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun createDiscoverListener(adapter: WifiPeersRecyclerViewAdapter): EndpointDiscoveryCallback {
+        return object : EndpointDiscoveryCallback() {
+            override fun onEndpointFound(id: String, info: DiscoveredEndpointInfo) {
+                adapter.values.add(Endpoint(id, info))
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onEndpointLost(p0: String) {
+                adapter.values.removeIf { it.id == p0 }
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -129,7 +169,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() &&
                             grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    discoverPeers()
+
                 } else {
                     shouldShowRequestPermissionRationale("Location is required to use WiFi direct")
                 }
@@ -139,7 +179,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         }
     }
 
-    override fun onConnClick(device: WifiP2pDevice) {
-        wifiViewModel.connect(device)
+    override fun onConnClick(device: Endpoint) {
+//        wifiViewModel.connect(device)
     }
 }
