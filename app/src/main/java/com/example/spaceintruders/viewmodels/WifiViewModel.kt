@@ -102,11 +102,34 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    fun cancelDiscovery() {
+        manager.stopPeerDiscovery(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                _connected.value = NOT_CONNECTED
+            }
+
+            override fun onFailure(reason: Int) {}
+        })
+    }
+
+    fun disconnectPeer() {
+        manager.cancelConnect(channel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                _connected.value = NOT_CONNECTED
+            }
+
+            override fun onFailure(reason: Int) {
+
+            }
+        })
+    }
+
     /**
      * Connects to a device with WiFi P2P.
      */
     @SuppressLint("MissingPermission")
     fun connect(device: WifiP2pDevice) {
+        _connected.value = CONNECTING
         val config = WifiP2pConfig()
         config.deviceAddress = device.deviceAddress
         config.groupOwnerIntent = 10000
@@ -302,5 +325,6 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         const val DISCOVERING = 2
         const val DISCOVERY_FAILED = 3
         const val CONNECTION_FAILED = 4
+        const val CONNECTING = 5
     }
 }
