@@ -35,6 +35,7 @@
                 android:id="@+id/pair_DiscoverBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
+                android:layout_marginStart="5dp"
                 android:backgroundTint="@color/purple_200"
                 android:text="@string/peer_discover"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -46,10 +47,9 @@
                 android:id="@+id/pair_StatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="Status"
+                android:layout_marginEnd="5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/pair_DiscoverBtn"
-                app:layout_constraintStart_toEndOf="@+id/pair_DiscoverBtn"
+                app:layout_constraintEnd_toStartOf="@+id/pairing_progressBar"
                 app:layout_constraintTop_toTopOf="@+id/pair_DiscoverBtn" />
 
             <ProgressBar

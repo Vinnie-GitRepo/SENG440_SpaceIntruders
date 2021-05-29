@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.spaceintruders.R
 import com.example.spaceintruders.gameentities.Bullet
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import java.io.ByteArrayInputStream
@@ -94,6 +95,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
 
     fun discover(context: Context) {
         val callback = createDiscoverListener()
+        _peers.value = mutableListOf()
 
         val options = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
         Nearby.getConnectionsClient(context).startDiscovery("spaceIntruders", callback, options).addOnSuccessListener {
@@ -101,11 +103,12 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             _connected.value = DISCOVERING
         }.addOnFailureListener {
             Log.d("Discovery Failed", it.toString())
-            _connected.value = DISCOVERY_FAILED
         }
     }
 
     fun joinHost(context: Context, endpoint: Endpoint) {
+        val oldValue = _connected.value
+        _connected.value = CONNECTING
         Nearby.getConnectionsClient(context)
             .requestConnection("CLIENT", endpoint.id, connectionListener)
             .addOnSuccessListener {
@@ -113,6 +116,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             }
             .addOnFailureListener {
                 Toast.makeText(context, context.getString(R.string.rejected), Toast.LENGTH_LONG).show()
+                _connected.value = oldValue
             }
     }
 

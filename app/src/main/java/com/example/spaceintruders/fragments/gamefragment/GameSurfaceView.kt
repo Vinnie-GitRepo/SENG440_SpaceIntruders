@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.spaceintruders.gameentities.*
 import com.example.spaceintruders.services.NearbyCommunication
@@ -99,6 +100,19 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
         player.position = tilt
         for (bullet in bullets.getBulletCopy()) {
             if (!bullet.travelComplete()) {
+                // This is to check if enemy bullet has collided with a friendly bullet.
+                if (bullet is BulletEnemy) {
+                    for (otherBullet in bullets.getBulletCopy()) {
+                        if (otherBullet is BulletSmallEntity) {
+                            Log.d("other bullet", "here")
+                            if (bullet.positionX-0.1 < otherBullet.positionX &&
+                                otherBullet.positionX < bullet.positionX+0.1 &&
+                                    otherBullet.positionY < bullet.positionY) {
+                                bullets.deleteBullet(bullet)
+                            }
+                        }
+                    }
+                }
                 bullet.updatePosition()
             } else {
                 if (bullet is BulletEnemy) {
