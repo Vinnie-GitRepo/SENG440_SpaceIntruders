@@ -27,5 +27,18 @@
         android:id="@+id/gameFragment"
         android:name="com.example.spaceintruders.fragments.gamefragment.GameFragment"
         android:label="fragment_game"
-        tools:layout="@layout/fragment_game" />
+        tools:layout="@layout/fragment_game" >
+        <action
+            android:id="@+id/action_gameFragment_to_endGameFragment"
+            app:destination="@id/endGameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/endGameFragment"
+        android:name="com.example.spaceintruders.fragments.endgamefragment.EndGameFragment"
+        android:label="fragment_end_game"
+        tools:layout="@layout/fragment_end_game" >
+        <action
+            android:id="@+id/action_endGameFragment_to_menuFragment2"
+            app:destination="@id/menuFragment" />
+    </fragment>
 </navigation>

@@ -7,20 +7,19 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.example.spaceintruders.gameentities.*
+import com.example.spaceintruders.services.NearbyCommunication
 import com.example.spaceintruders.util.BulletCollection
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 
-class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, private val wifiModel: WifiViewModel, private val gameViewModel: GameViewModel) : SurfaceView(context) {
+class GameSurfaceView(context: Context, private val screenX: Int, private val screenY: Int, private val nearbyCommunication: NearbyCommunication, private val gameViewModel: GameViewModel) : SurfaceView(context) {
     private lateinit var thread: Thread
     private var running: Boolean = false
     private val paint: Paint = Paint()
-    val screenRatioX: Float = 0f
-    val screenRatioY: Float = 0f
-    val screenScaleX: Float = screenX / 1000f
-    val screenScaleY: Float = screenY / 1000f
+
     var tilt: Float = 0f
     private val bullets: BulletCollection = BulletCollection()
 
@@ -98,6 +97,19 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
         player.position = tilt
         for (bullet in bullets.getBulletCopy()) {
             if (!bullet.travelComplete()) {
+                // This is to check if enemy bullet has collided with a friendly bullet.
+                if (bullet is BulletEnemy) {
+                    for (otherBullet in bullets.getBulletCopy()) {
+                        if (otherBullet is BulletSmallEntity) {
+                            Log.d("other bullet", "here")
+                            if (bullet.positionX-0.1 < otherBullet.positionX &&
+                                otherBullet.positionX < bullet.positionX+0.1 &&
+                                    otherBullet.positionY < bullet.positionY) {
+                                bullets.deleteBullet(bullet)
+                            }
+                        }
+                    }
+                }
                 bullet.updatePosition()
             } else {
                 if (bullet is BulletEnemy) {
@@ -105,7 +117,7 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
                     gameViewModel.enemyScored()
                 } else if (bullet is BulletBigEntity) {
                     Log.d("GameView: Update", "Big bullet sending")
-                    wifiModel.sendBullet(bullet)
+                    nearbyCommunication.sendBullet(context, bullet)
                 }
                 bullets.deleteBullet(bullet)
             }

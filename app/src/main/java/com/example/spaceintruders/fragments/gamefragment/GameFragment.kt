@@ -2,6 +2,8 @@ package com.example.spaceintruders.fragments.gamefragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -20,11 +22,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.example.spaceintruders.R
+import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.util.AppUtil.getColorFromAttr
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 import java.lang.NumberFormatException
@@ -35,7 +42,7 @@ import kotlin.math.absoluteValue
  * Fragment that represents game.
  */
 class GameFragment : Fragment() {
-    private val wifiViewModel: WifiViewModel by activityViewModels()
+    private val nearbyCommunication: NearbyCommunication by activityViewModels()
     private val gameViewModel: GameViewModel by activityViewModels()
 
     private lateinit var gameSurfaceView: GameSurfaceView
@@ -54,16 +61,21 @@ class GameFragment : Fragment() {
     }
 
     private fun parseInstruction(instruction: String) {
+        Log.d("Instruction parser", "Instruction: '${instruction}'")
         if (instruction.startsWith("bullet")) {
             try {
                 Log.i("Instruction parser", "Attempting to parse...")
                 val number = instruction.removePrefix("bullet")
                 Log.i("Instruction parser", number)
                 gameSurfaceView.enemyShoot(number.toFloat())
-                wifiViewModel.resetInstruction()
+                nearbyCommunication.resetInstruction()
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
+        } else if (instruction.startsWith("youwon")) {
+            findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+        } else if (instruction.startsWith("scored")) {
+            gameViewModel.enemyScored()
         }
     }
 
@@ -77,7 +89,7 @@ class GameFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Create game view
         val point = getScreenDimensions(requireActivity())
-        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, wifiViewModel, gameViewModel)
+        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
 
         // Create sensor manager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -94,7 +106,30 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        wifiViewModel.instruction.observe(viewLifecycleOwner) {parseInstruction(it)}
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.exitTitle))
+                    .setMessage(getString(R.string.exitText))
+                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                        nearbyCommunication.disconnect(requireContext())
+                    }
+                    .setNegativeButton(getString(R.string.no), null).show()
+                dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
+                dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        nearbyCommunication.connected.observe(viewLifecycleOwner) { if (it == NearbyCommunication.NOT_CONNECTED) findNavController().popBackStack() }
+        nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }
+
+        gameViewModel.scoreVisitPlayer.observe(viewLifecycleOwner) {
+            if (it >= 3) {
+                nearbyCommunication.sendOpponentVictoryCondition(requireContext())
+                findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+            }
+        }
         return gameSurfaceView
     }
 

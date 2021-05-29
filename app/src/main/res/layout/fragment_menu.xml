@@ -17,7 +17,7 @@
 
         <ImageView
             android:id="@+id/home_ScreenImage"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:contentDescription="@string/home_ContentDescriptionText"
             android:src="@drawable/intruderlogo"
@@ -27,7 +27,7 @@
 
         <Button
             android:id="@+id/home_PlayButton"
-            style="@style/Widget.MaterialComponents.Button"
+            style="@android:style/Widget.DeviceDefault.Button.Colored"
             android:layout_width="206dp"
             android:layout_height="92dp"
             android:text="@string/home_PlayButtonText"

@@ -29,9 +29,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="peer_connect">Connect</string>
-    <string name="peer_discover">Discover Peers</string>
-    <string name="peer_discovery_start">Discovery Started</string>
-    <string name="peer_discovery_fail">Discovery cannot start</string>
+    <string name="peer_discover">Discover Nearby Players</string>
+    <string name="peer_discovery_start">Searching</string>
+    <string name="peer_discovery_fail">Discovery Failed</string>
     <string name="peer_connected">Connected</string>
     <string name="peer_discovery_inactive">Inactive</string>
     <string name="peer_connection_fail">Connection failed</string>
@@ -40,6 +40,15 @@
     <string name="username_label">Username</string>
     <string name="save_settings_button_text">Save Colour</string>
     <string name="ship_preview">Ship Preview</string>
+    <string name="connecting">Connecting</string>
+    <string name="port">Port Number</string>
+    <string name="exitTitle">Exit</string>
+    <string name="exitText">Are you sure you want to disconnect?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="unexpectedDisconnect">Your opponent disconnected.</string>
+    <string name="rejected">Connection Rejected.</string>
+    <string name="returnToMain">Main Menu</string>
     <string name="visit_player_name_string">Player2</string>
     <string name="visit_player_score_string">Score2</string>
     <string name="home_player_score_string">Score1</string>
