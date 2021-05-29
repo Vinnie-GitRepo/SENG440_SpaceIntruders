@@ -1,6 +1,5 @@
 package com.example.spaceintruders.fragments.pairingfragment
 
-import android.net.wifi.p2p.WifiP2pDevice
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
 import com.example.spaceintruders.services.Endpoint
 
-class WifiPeersRecyclerViewAdapter(private val connectListener: OnConnectListener): RecyclerView.Adapter<WifiPeersRecyclerViewAdapter.ItemViewHolder>() {
+class NearbyPeersRecyclerViewAdapter(private val connectListener: OnConnectListener): RecyclerView.Adapter<NearbyPeersRecyclerViewAdapter.ItemViewHolder>() {
     private var values: List<Endpoint> = arrayListOf()
 
     class ItemViewHolder(view: View, connectListener: OnConnectListener) : RecyclerView.ViewHolder(view) {

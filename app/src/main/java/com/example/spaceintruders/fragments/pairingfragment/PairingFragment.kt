@@ -2,7 +2,6 @@ package com.example.spaceintruders.fragments.pairingfragment
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -35,12 +34,12 @@ import com.google.android.gms.nearby.connection.*
  * Use the [PairingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListener {
+class PairingFragment : Fragment(), NearbyPeersRecyclerViewAdapter.OnConnectListener {
     private lateinit var discoverButton: Button
     private lateinit var statusText: TextView
     private lateinit var peersListView: RecyclerView
     private lateinit var loadingCircle: ProgressBar
-    private val adapter = WifiPeersRecyclerViewAdapter(this)
+    private val adapter = NearbyPeersRecyclerViewAdapter(this)
 
     private val nearbyCommunication: NearbyCommunication by activityViewModels()
 
