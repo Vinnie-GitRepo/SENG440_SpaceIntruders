@@ -1,11 +1,9 @@
 package com.example.spaceintruders.services
 
 import android.app.Application
-import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.collection.SimpleArrayMap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -36,7 +34,6 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     private lateinit var connectionListener: ConnectionLifecycleCallback
 
     private val payloadListener = object : PayloadCallback() {
-        private val incomingPayloads: SimpleArrayMap<Long, Payload> = SimpleArrayMap()
         override fun onPayloadReceived(endpoint: String, payload: Payload) {
             Log.d("PayloadListener", "Payload Received")
             payload.asBytes()?.let { bytes ->
@@ -59,7 +56,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     fun sendOpponentVictoryCondition(context: Context) {
-        val message = "youwon"
+        val message = "youWon"
         sendMessage(context, message)
     }
 
@@ -74,12 +71,23 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     /**##### Discovery and Pairing #####**/
+    fun stopSearch(context: Context) {
+        _connected.value = INACTIVE
+        Nearby.getConnectionsClient(context).stopDiscovery()
+        Nearby.getConnectionsClient(context).stopAdvertising()
+    }
+
+    fun startSearch(context: Context) {
+        advertise(context)
+        discover(context)
+    }
+
     fun disconnect(context: Context) {
         _connected.value = NOT_CONNECTED
         Nearby.getConnectionsClient(context).stopAllEndpoints()
     }
 
-    fun advertise(context: Context) {
+    private fun advertise(context: Context) {
         val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
         Nearby.getConnectionsClient(context).startAdvertising(android.os.Build.MODEL, "spaceIntruders", connectionListener, options)
             .addOnSuccessListener {
@@ -89,7 +97,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             }
     }
 
-    fun discover(context: Context) {
+    private fun discover(context: Context) {
         _connected.value = CONNECTING
         val callback = createDiscoverListener()
         _peers.value = mutableListOf()
@@ -117,7 +125,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             }
     }
 
-    fun createDiscoverListener(): EndpointDiscoveryCallback {
+    private fun createDiscoverListener(): EndpointDiscoveryCallback {
         return object : EndpointDiscoveryCallback() {
             override fun onEndpointFound(id: String, info: DiscoveredEndpointInfo) {
                 _peers.value!!.add(Endpoint(id, info))
@@ -142,8 +150,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             override fun onConnectionResult(endpoint: String, result: ConnectionResolution) {
                 when (result.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
-                        Nearby.getConnectionsClient(context).stopDiscovery()
-                        Nearby.getConnectionsClient(context).stopAdvertising()
+                        stopSearch(context)
                         _peers.value = mutableListOf()
                         hostEndpoint = endpoint
                         _connected.value = CONNECTED
@@ -174,6 +181,6 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         const val DISCOVERY_FAILED = 3
         const val CONNECTION_FAILED = 4
         const val CONNECTING = 5
-        const val DISCONNECTED = 6
+        const val INACTIVE = 6
     }
 }

@@ -6,8 +6,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
-import android.graphics.Color
-import android.graphics.Insets
 import android.graphics.Point
 import android.graphics.Rect
 import android.hardware.Sensor
@@ -21,21 +19,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import androidx.preference.PreferenceManager
 import com.example.spaceintruders.R
 import com.example.spaceintruders.services.NearbyCommunication
 import com.example.spaceintruders.util.AppUtil.getColorFromAttr
 import com.example.spaceintruders.viewmodels.GameViewModel
-import com.example.spaceintruders.viewmodels.WifiViewModel
-import java.lang.NumberFormatException
-import kotlin.math.absoluteValue
 
 
 /**
@@ -47,9 +39,6 @@ class GameFragment : Fragment() {
 
     private lateinit var gameSurfaceView: GameSurfaceView
     private lateinit var sensorManager: SensorManager
-
-    init {
-    }
 
     private val gravityListener = object : SensorEventListener {
         override fun onAccuracyChanged(sensor: Sensor, p1: Int) {
@@ -72,8 +61,8 @@ class GameFragment : Fragment() {
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
-        } else if (instruction.startsWith("youwon")) {
-            findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+        } else if (instruction.startsWith("youWon")) {
+            navigateToEndGame()
             nearbyCommunication.resetInstruction()
         } else if (instruction.startsWith("scored")) {
             gameViewModel.enemyScored()
@@ -100,7 +89,11 @@ class GameFragment : Fragment() {
         }
         // Locks activity to portrait for this activity.
         // It must be unlocked when leaving this fragment.
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    private fun navigateToEndGame() {
+        findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     override fun onCreateView(
@@ -123,13 +116,18 @@ class GameFragment : Fragment() {
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
 
-        nearbyCommunication.connected.observe(viewLifecycleOwner) { if (it == NearbyCommunication.NOT_CONNECTED) findNavController().popBackStack() }
+        nearbyCommunication.connected.observe(viewLifecycleOwner) {
+            if (it == NearbyCommunication.NOT_CONNECTED) {
+                findNavController().popBackStack()
+                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            }
+        }
         nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }
 
         gameViewModel.scoreVisitPlayer.observe(viewLifecycleOwner) {
             if (it >= 3) {
                 nearbyCommunication.sendOpponentVictoryCondition(requireContext())
-                findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+                navigateToEndGame()
             }
         }
         return gameSurfaceView

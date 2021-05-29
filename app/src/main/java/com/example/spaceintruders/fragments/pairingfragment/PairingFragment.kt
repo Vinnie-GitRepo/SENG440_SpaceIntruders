@@ -1,13 +1,12 @@
 package com.example.spaceintruders.fragments.pairingfragment
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.net.Uri
-import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -16,22 +15,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
-import com.example.spaceintruders.activities.MainActivity
 import com.example.spaceintruders.services.Endpoint
 import com.example.spaceintruders.services.NearbyCommunication
-import com.example.spaceintruders.viewmodels.GameViewModel
-import com.example.spaceintruders.viewmodels.WifiViewModel
-import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 
 
@@ -57,6 +52,14 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_pairing, container, false)
 
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                nearbyCommunication.stopSearch(requireContext())
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         // Assign widget values
         statusText = view.findViewById(R.id.pair_StatusText)
         discoverButton = view.findViewById(R.id.pair_DiscoverBtn)
@@ -66,8 +69,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         loadingCircle.visibility = View.INVISIBLE
 
         discoverButton.setOnClickListener {
-            nearbyCommunication.advertise(requireContext())
-            nearbyCommunication.discover(requireContext())
+            nearbyCommunication.startSearch(requireContext())
         }
 
         peersListView.adapter = adapter
@@ -79,6 +81,10 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
 
         nearbyCommunication.connected.observe(viewLifecycleOwner) { data ->
             when (data) {
+                NearbyCommunication.INACTIVE -> {
+                    statusText.text = ""
+                    loadingCircle.visibility = View.INVISIBLE
+                }
                 NearbyCommunication.CONNECTING -> {
                     statusText.text = getString(R.string.connecting)
                     loadingCircle.visibility = View.VISIBLE
@@ -97,6 +103,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
                     val color = -0x5fa81b
                     loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
                     Log.d("", "navigating to game")
+                    requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                     findNavController().navigate(R.id.action_pairingFragment_to_gameFragment)
                 }
                 NearbyCommunication.DISCOVERY_FAILED -> {
