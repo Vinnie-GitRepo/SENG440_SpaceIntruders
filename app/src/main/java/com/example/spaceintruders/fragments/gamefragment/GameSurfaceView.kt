@@ -63,15 +63,19 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
         setWillNotDraw(false)
     }
 
+    private fun vibrate(milliseconds: Long) {
+        val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            v.vibrate(VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            v.vibrate(milliseconds)
+        }
+    }
+
     private fun shootAcross() {
         if (canShootbig == 0) {
             canShootbig += 50
-            val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.EFFECT_HEAVY_CLICK))
-            } else {
-                v.vibrate(500)
-            }
+            vibrate(150)
             Thread {
                 bullets.addBullet(BulletBigEntity(screenX, screenY, resources, tilt))
             }.start()
@@ -82,6 +86,7 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
         if (canShootSmall == 0) {
             canShootSmall += 20
             Thread {
+                vibrate(90)
                 bullets.addBullet(BulletSmallEntity(screenX, screenY, resources, tilt))
             }.start()
         }
@@ -134,6 +139,7 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
                 if (bullet is BulletEnemy) {
                     Log.d("GameView: Update", "Enemy scored")
                     gameViewModel.enemyScored()
+                    vibrate(500)
                 } else if (bullet is BulletBigEntity) {
                     Log.d("GameView: Update", "Big bullet sending")
                     nearbyCommunication.sendBullet(context, bullet)

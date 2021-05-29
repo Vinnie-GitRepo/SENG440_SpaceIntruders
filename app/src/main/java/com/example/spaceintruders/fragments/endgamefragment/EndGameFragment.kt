@@ -40,8 +40,6 @@ class EndGameFragment : Fragment() {
         mainMenuButton.setOnClickListener {
             returnToHomeScreen()
         }
-
-        // Inflate the layout for this fragment
         return view
     }
 
