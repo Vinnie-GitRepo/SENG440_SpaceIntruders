@@ -9,11 +9,12 @@ import android.view.MotionEvent
 import android.view.SurfaceView
 import androidx.fragment.app.activityViewModels
 import com.example.spaceintruders.gameentities.*
+import com.example.spaceintruders.services.NearbyCommunication
 import com.example.spaceintruders.util.BulletCollection
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 
-class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, private val wifiModel: WifiViewModel, private val gameViewModel: GameViewModel) : SurfaceView(context) {
+class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, private val nearbyCommunication: NearbyCommunication, private val gameViewModel: GameViewModel) : SurfaceView(context) {
     private lateinit var thread: Thread
     private var running: Boolean = false
     private val paint: Paint = Paint()
@@ -105,7 +106,7 @@ class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, priv
                     gameViewModel.enemyScored()
                 } else if (bullet is BulletBigEntity) {
                     Log.d("GameView: Update", "Big bullet sending")
-                    wifiModel.sendBullet(bullet)
+                    nearbyCommunication.sendBullet(context, bullet)
                 }
                 bullets.deleteBullet(bullet)
             }

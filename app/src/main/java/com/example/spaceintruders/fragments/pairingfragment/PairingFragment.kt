@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
@@ -95,6 +96,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
                     loadingCircle.visibility = View.INVISIBLE
                     val color = -0x5fa81b
                     loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+                    findNavController().navigate(R.id.action_pairingFragment_to_gameFragment)
                 }
                 NearbyCommunication.DISCOVERY_FAILED -> {
                     statusText.text = getString(R.string.peer_discovery_fail)

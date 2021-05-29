@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.preference.PreferenceManager
+import com.example.spaceintruders.services.NearbyCommunication
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 import java.lang.NumberFormatException
@@ -35,7 +36,7 @@ import kotlin.math.absoluteValue
  * Fragment that represents game.
  */
 class GameFragment : Fragment() {
-    private val wifiViewModel: WifiViewModel by activityViewModels()
+    private val nearbyCommunication: NearbyCommunication by activityViewModels()
     private val gameViewModel: GameViewModel by activityViewModels()
 
     private lateinit var gameSurfaceView: GameSurfaceView
@@ -54,13 +55,14 @@ class GameFragment : Fragment() {
     }
 
     private fun parseInstruction(instruction: String) {
+        Log.d("Instruction parser", "Instruction: '${instruction}'")
         if (instruction.startsWith("bullet")) {
             try {
                 Log.i("Instruction parser", "Attempting to parse...")
                 val number = instruction.removePrefix("bullet")
                 Log.i("Instruction parser", number)
                 gameSurfaceView.enemyShoot(number.toFloat())
-                wifiViewModel.resetInstruction()
+                nearbyCommunication.resetInstruction()
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
@@ -77,7 +79,7 @@ class GameFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Create game view
         val point = getScreenDimensions(requireActivity())
-        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, wifiViewModel, gameViewModel)
+        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
 
         // Create sensor manager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -94,7 +96,7 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        wifiViewModel.instruction.observe(viewLifecycleOwner) {parseInstruction(it)}
+        nearbyCommunication.instruction.observe(viewLifecycleOwner) {parseInstruction(it)}
         return gameSurfaceView
     }
 

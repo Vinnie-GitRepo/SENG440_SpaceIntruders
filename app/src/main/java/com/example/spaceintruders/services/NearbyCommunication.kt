@@ -1,20 +1,21 @@
 package com.example.spaceintruders.services
 
-import android.Manifest
 import android.app.Application
 import android.content.Context
-import android.net.wifi.p2p.WifiP2pDevice
-import android.os.Bundle
 import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.collection.SimpleArrayMap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.spaceintruders.fragments.pairingfragment.WifiPeersRecyclerViewAdapter
+import com.example.spaceintruders.gameentities.Bullet
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import java.io.ByteArrayInputStream
+import java.io.InputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
+import java.util.*
 
 class NearbyCommunication(application: Application) : AndroidViewModel(application) {
     /**##### Observable variables #####**/
@@ -37,13 +38,48 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     private lateinit var connectionListener: ConnectionLifecycleCallback
 
     private val payloadListener = object : PayloadCallback() {
+        private val incomingPayloads: SimpleArrayMap<Long, Payload> = SimpleArrayMap()
         override fun onPayloadReceived(endpoint: String, payload: Payload) {
-
+            Log.d("PayloadListener", "Payload Received")
+            payload.asBytes()?.let { bytes ->
+                _instruction.value = String(bytes)
+            }
         }
-        override fun onPayloadTransferUpdate(endpoint: String, update: PayloadTransferUpdate) {}
+        override fun onPayloadTransferUpdate(endpoint: String, update: PayloadTransferUpdate) {
+        }
     }
 
     /**##### Functions #####**/
+    fun sendBullet(context: Context, bullet: Bullet) {
+        val message = "bullet${bullet.positionX}"
+        sendMessage(context, message)
+    }
+
+    fun sendYouScored(context: Context) {
+        val message = "scored"
+        sendMessage(context, message)
+    }
+
+    fun sendVictoryCondition(context: Context) {
+        val message = "youwon"
+        sendMessage(context, message)
+    }
+
+    fun resetInstruction() {
+        _instruction.value = ""
+    }
+
+    private fun sendMessage(context: Context, message: String) {
+        hostEndpoint?.let {
+            Nearby.getConnectionsClient(context).sendPayload(it, Payload.fromBytes(message.toByteArray()))
+        }
+    }
+
+    /**##### Discovery and Pairing #####**/
+    fun disconnect(context: Context) {
+        Nearby.getConnectionsClient(context).disconnectFromEndpoint(hostEndpoint!!)
+    }
+
     fun advertise(context: Context) {
         val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
         Nearby.getConnectionsClient(context).startAdvertising(android.os.Build.MODEL, "spaceIntruders", connectionListener, options)
@@ -92,15 +128,18 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    /**##### Initialisation ####**/
     fun setConnectionObserver(context: Context) {
         connectionListener = object : ConnectionLifecycleCallback() {
             override fun onConnectionInitiated(id: String, info: ConnectionInfo) {
+                Log.d("Connection", "Connection initiated")
                 Nearby.getConnectionsClient(context).acceptConnection(id, payloadListener)
             }
 
             override fun onConnectionResult(endpoint: String, result: ConnectionResolution) {
                 when (result.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
+                        hostEndpoint = endpoint
                         _connected.value = CONNECTED
                     }
                     ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
