@@ -49,4 +49,8 @@
     <string name="unexpectedDisconnect">Your opponent disconnected.</string>
     <string name="rejected">Connection Rejected.</string>
     <string name="returnToMain">Main Menu</string>
+    <string name="visit_player_name_string">Player2</string>
+    <string name="visit_player_score_string">Score2</string>
+    <string name="home_player_score_string">Score1</string>
+    <string name="home_player_name_string">Player1</string>
 </resources>
