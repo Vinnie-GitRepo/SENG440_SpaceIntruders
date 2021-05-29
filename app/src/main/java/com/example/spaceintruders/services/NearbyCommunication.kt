@@ -1,6 +1,7 @@
 package com.example.spaceintruders.services
 
 import android.app.Application
+import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -10,14 +11,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.spaceintruders.R
 import com.example.spaceintruders.gameentities.Bullet
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
-import java.util.*
+
 
 class NearbyCommunication(application: Application) : AndroidViewModel(application) {
     /**##### Observable variables #####**/
@@ -94,6 +90,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     fun discover(context: Context) {
+        _connected.value = CONNECTING
         val callback = createDiscoverListener()
         _peers.value = mutableListOf()
 
@@ -147,6 +144,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
                     ConnectionsStatusCodes.STATUS_OK -> {
                         Nearby.getConnectionsClient(context).stopDiscovery()
                         Nearby.getConnectionsClient(context).stopAdvertising()
+                        _peers.value = mutableListOf()
                         hostEndpoint = endpoint
                         _connected.value = CONNECTED
                     }

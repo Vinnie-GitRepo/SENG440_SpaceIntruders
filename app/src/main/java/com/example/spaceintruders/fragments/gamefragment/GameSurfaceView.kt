@@ -3,17 +3,19 @@ package com.example.spaceintruders.fragments.gamefragment
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.spaceintruders.gameentities.*
 import com.example.spaceintruders.services.NearbyCommunication
 import com.example.spaceintruders.util.BulletCollection
 import com.example.spaceintruders.viewmodels.GameViewModel
-import com.example.spaceintruders.viewmodels.WifiViewModel
+
 
 class GameSurfaceView(context: Context, private val screenX: Int, private val screenY: Int, private val nearbyCommunication: NearbyCommunication, private val gameViewModel: GameViewModel) : SurfaceView(context) {
     private lateinit var thread: Thread
@@ -21,6 +23,8 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
     private val paint: Paint = Paint()
 
     var tilt: Float = 0f
+    private var canShootSmall = 0
+    private var canShootbig = 0
     private val bullets: BulletCollection = BulletCollection()
 
     private val background: GameBackground = GameBackground(screenX, screenY, resources)
@@ -60,15 +64,27 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
     }
 
     private fun shootAcross() {
-        Thread {
-            bullets.addBullet(BulletBigEntity(screenX, screenY, resources, tilt))
-        }.start()
+        if (canShootbig == 0) {
+            canShootbig += 50
+            val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.EFFECT_HEAVY_CLICK))
+            } else {
+                v.vibrate(500)
+            }
+            Thread {
+                bullets.addBullet(BulletBigEntity(screenX, screenY, resources, tilt))
+            }.start()
+        }
     }
 
     private fun shoot() {
-        Thread {
-            bullets.addBullet(BulletSmallEntity(screenX, screenY, resources, tilt))
-        }.start()
+        if (canShootSmall == 0) {
+            canShootSmall += 20
+            Thread {
+                bullets.addBullet(BulletSmallEntity(screenX, screenY, resources, tilt))
+            }.start()
+        }
     }
 
     fun enemyShoot(position: Float) {
@@ -95,6 +111,9 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
 
     private fun update() {
         player.position = tilt
+        if (canShootSmall > 0) canShootSmall -= 1
+        if (canShootbig > 0) canShootbig -=1
+
         for (bullet in bullets.getBulletCopy()) {
             if (!bullet.travelComplete()) {
                 // This is to check if enemy bullet has collided with a friendly bullet.
