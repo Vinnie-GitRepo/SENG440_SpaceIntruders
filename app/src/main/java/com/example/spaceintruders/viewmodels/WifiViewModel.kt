@@ -12,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.WifiP2pManager.GroupInfoListener
 import android.os.Handler
 import android.os.Looper
+import android.system.ErrnoException
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.lang.Exception
 import java.net.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -40,7 +42,13 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
 
     private lateinit var server: Server
     private lateinit var client: Client
+    private lateinit var inputStream: InputStream
+    private lateinit var outputStream: OutputStream
+    private lateinit var socketRunner: SocketRunner
 
+    private var stop = false
+
+    private var port = 0
     private var initiator: Boolean = false
     private var ready = false
     private var groupOwner: Boolean = false
@@ -60,7 +68,6 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
 
     // Functions
     fun initialiseManager(manager: WifiP2pManager, channel: WifiP2pManager.Channel, receiver: WifiDirectBroadcastReceiver) {
-        socket = null
         this.manager = manager
         this.channel = channel
         this.receiver = receiver
@@ -100,6 +107,11 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
                 }
             })
         }
+    }
+
+    fun setPort(port: Int) {
+        Log.d("Ports", "Setting port")
+        this.port = port
     }
 
 //    fun killConnections() {
@@ -169,8 +181,16 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         }
     }
 
+    fun resetServer() {
+        stop = true
+        inputStream.close()
+        outputStream.close()
+        socket!!.close()
+    }
+
     @SuppressLint("MissingPermission")
     fun disconnect() {
+        resetServer()
         manager.requestGroupInfo(channel
         ) { group ->
             if (group != null) {
@@ -219,8 +239,6 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
     override val connectionInfoListener: WifiP2pManager.ConnectionInfoListener = WifiP2pManager.ConnectionInfoListener {
         if (it.groupFormed) {
             val groupOwnerAddress = it.groupOwnerAddress
-            socket?.close()
-            socket = null
             if (it.isGroupOwner) {
                 groupOwner = true
                 _connected.value = CONNECTED
@@ -238,13 +256,11 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
     }
 
     inner class Client(hostAddress: InetAddress) : Thread() {
-        private lateinit var inputStream: InputStream
-        private lateinit var outputStream: OutputStream
         var hostAdd: String = hostAddress.hostAddress
 
         init {
             socket = Socket()
-            socket!!.reuseAddress = true
+
         }
 
         fun write(bytes: ByteArray) {
@@ -254,21 +270,28 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
 
         override fun run() {
             try {
-                socket!!.connect(InetSocketAddress(hostAdd, 8888), 500)
-                inputStream = socket!!.getInputStream()
+                socket!!.bind(null)
+                socket!!.connect(InetSocketAddress(hostAdd, port), 500)
+
                 outputStream = socket!!.getOutputStream()
+                inputStream = socket!!.getInputStream()
+                socketRunner = SocketRunner()
+                socketRunner.start()
+            } catch (e : BindException) {
+                _connected.value = PORT_IN_USE
+                disconnect()
             } catch (e : IOException) {
                 e.printStackTrace()
+                disconnect()
+            } catch (e : Exception) {
+                _connected.value = UNKNOWN_ERROR
+                disconnect()
             }
-
-            socketRunner(inputStream)
         }
     }
 
-    inner class Server() : Thread() {
+    inner class Server : Thread() {
         lateinit var serverSocket: ServerSocket
-        private lateinit var inputStream: InputStream
-        private lateinit var outputStream: OutputStream
 
         fun write(bytes: ByteArray) {
             Log.d("Write", String(bytes))
@@ -279,46 +302,62 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
             try {
                 serverSocket = ServerSocket()
                 serverSocket.reuseAddress = true
-                serverSocket.bind(InetSocketAddress(8888))
+                serverSocket.bind(InetSocketAddress(port))
                 socket = serverSocket.accept()
-                inputStream = socket!!.getInputStream()
+
                 outputStream = socket!!.getOutputStream()
+                inputStream = socket!!.getInputStream()
+                socketRunner = SocketRunner()
+                socketRunner.start()
+            }  catch (e : BindException) {
+                _connected.value = PORT_IN_USE
+                disconnect()
             } catch (e : IOException) {
                 e.printStackTrace()
+                disconnect()
+            } catch (e : Exception) {
+                _connected.value = UNKNOWN_ERROR
+                disconnect()
             }
-
-            socketRunner(inputStream)
         }
     }
 
-    fun socketRunner(inputStream: InputStream) {
-        val executor: ExecutorService = Executors.newSingleThreadExecutor()
-        val handler = Handler(Looper.getMainLooper())
+    inner class SocketRunner : Thread() {
+        override fun run() {
+            val executor: ExecutorService = Executors.newSingleThreadExecutor()
+            val handler = Handler(Looper.getMainLooper())
 
-        if (!initiator) {
-            sendReady()
+            if (!initiator) {
+                sendReady()
+            }
+
+            executor.run {
+                val buffer = ByteArray(1024)
+                var bytes: Int
+
+                while (!stop) {
+                    try {
+                        bytes = inputStream.read(buffer)
+                        if (bytes > 0) {
+                            val finalBytes = bytes
+                            val runnable = Runnable {
+                                val tempMSG = String(buffer, 0, finalBytes)
+                                receive(tempMSG)
+                                Log.d("Valueinst", tempMSG)
+                            }
+                            handler.post(runnable)
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+                socket!!.close()
+                inputStream.close()
+            }
         }
 
-        executor.run {
-            val buffer = ByteArray(1024)
-            var bytes : Int
-
-            while (socket != null) {
-                try {
-                    bytes = inputStream.read(buffer)
-                    if (bytes > 0) {
-                        val finalBytes = bytes
-                        val runnable = Runnable {
-                            val tempMSG = String(buffer, 0, finalBytes)
-                            receive(tempMSG)
-                            Log.d("Valueinst", tempMSG)
-                        }
-                        handler.post(runnable)
-                    }
-                } catch (e : IOException) {
-                    e.printStackTrace()
-                }
-            }
+        override fun destroy() {
+            stop = true
         }
     }
 
@@ -332,5 +371,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application), W
         const val DISCOVERY_FAILED = 3
         const val CONNECTION_FAILED = 4
         const val CONNECTING = 5
+        const val PORT_IN_USE = 6
+        const val UNKNOWN_ERROR = 7
     }
 }

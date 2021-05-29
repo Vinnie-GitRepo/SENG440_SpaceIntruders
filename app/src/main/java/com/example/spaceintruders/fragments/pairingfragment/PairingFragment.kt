@@ -9,6 +9,8 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +39,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
     private lateinit var statusText: TextView
     private lateinit var peersListView: RecyclerView
     private lateinit var loadingCircle: ProgressBar
+    private lateinit var portInput: TextView
     private val adapter = WifiPeersRecyclerViewAdapter(this)
 
     private val wifiViewModel: WifiViewModel by activityViewModels()
@@ -53,6 +56,23 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         discoverButton = view.findViewById(R.id.pair_DiscoverBtn)
         peersListView = view.findViewById(R.id.peer_recyclerView)
         loadingCircle = view.findViewById(R.id.pairing_progressBar)
+        portInput = view.findViewById(R.id.portInput)
+        portInput.text = "8888"
+
+        portInput.addTextChangedListener(object : TextWatcher {
+            var text = ""
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                text = s.toString()
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                wifiViewModel.setPort(text.toInt())
+            }
+        })
 
         loadingCircle.visibility = View.INVISIBLE
 
@@ -62,6 +82,9 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
 
         wifiViewModel.connected.observe(viewLifecycleOwner) { data ->
             when (data) {
+                WifiViewModel.PORT_IN_USE -> {
+
+                }
                 WifiViewModel.CONNECTING -> {
                     statusText.text = getString(R.string.connecting)
                     loadingCircle.visibility = View.VISIBLE
@@ -112,7 +135,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         return view
     }
 
-    fun discoverPeers() {
+    private fun discoverPeers() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -120,7 +143,6 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
         ) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
-//        wifiViewModel.killConnections()
         val manager = requireActivity().getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         val channel = manager.initialize(context, Looper.getMainLooper(), null)
         val receiver = WifiDirectBroadcastReceiver(manager, channel, wifiViewModel)

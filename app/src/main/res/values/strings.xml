@@ -41,4 +41,5 @@
     <string name="save_settings_button_text">Save Colour</string>
     <string name="ship_preview">Ship Preview</string>
     <string name="connecting">Connecting</string>
+    <string name="port">Port Number</string>
 </resources>
