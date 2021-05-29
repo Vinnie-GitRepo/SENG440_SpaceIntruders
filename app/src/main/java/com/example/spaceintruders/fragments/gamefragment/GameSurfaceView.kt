@@ -113,6 +113,7 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
         return true
     }
 
+
     private fun update() {
         player.position = tilt
         if (canShootSmall > 0) canShootSmall -= 1

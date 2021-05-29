@@ -51,15 +51,19 @@ class GameFragment : Fragment() {
         Log.d("Instruction parser", "Instruction: '${instruction}'")
         if (instruction.startsWith("bullet")) {
             try {
-                Log.i("Instruction parser", "Attempting to parse...")
                 val number = instruction.removePrefix("bullet")
-                Log.i("Instruction parser", number)
                 gameSurfaceView.enemyShoot(number.toFloat())
                 nearbyCommunication.resetInstruction()
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
         } else if (instruction.startsWith("youWon")) {
+            try {
+                val number = instruction.removePrefix("youWon")
+
+            } catch (e : NumberFormatException) {
+                Log.e("Instruction parser", "Failed to parse: $e")
+            }
             navigateToEndGame()
             nearbyCommunication.resetInstruction()
         } else if (instruction.startsWith("scored")) {
@@ -76,17 +80,11 @@ class GameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Create game view
-
-
-
         // Create sensor manager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY).let { sensor ->
             sensorManager.registerListener(gravityListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
         }
-        // Locks activity to portrait for this activity.
-        // It must be unlocked when leaving this fragment.
     }
 
     private fun navigateToEndGame() {
@@ -132,6 +130,7 @@ class GameFragment : Fragment() {
         }
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
+        // Set fullscreen
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
@@ -140,6 +139,7 @@ class GameFragment : Fragment() {
             controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
 
+        // Create game view with screen dimensions
         val point = getScreenDimensions(requireActivity())
         gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
         gameSurfaceView.resume()
@@ -159,27 +159,15 @@ class GameFragment : Fragment() {
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
-    override fun onPause() {
-        super.onPause()
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-    }
-
     /**
      * Gets dimensions of screen.
      * @return Point object containing width and height of screen.
      */
     private fun getScreenDimensions(activity: Activity): Point {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val rect = Rect()
             val point = Point()
             activity.display!!.getRealSize(point)
             return point
-//            Point(rect.width(), rect.height())
         } else {
             val displayMetrics = DisplayMetrics()
             activity.windowManager.defaultDisplay.getMetrics(displayMetrics)

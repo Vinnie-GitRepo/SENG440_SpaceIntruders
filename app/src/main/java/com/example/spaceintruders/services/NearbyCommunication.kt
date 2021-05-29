@@ -45,25 +45,42 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     /**##### Functions #####**/
+    /**
+     * Sends message that a bullet has been sent and at what X coordinate.
+     * E.g. bullet0.9983
+     */
     fun sendBullet(context: Context, bullet: Bullet) {
         val message = "bullet${bullet.positionX}"
         sendMessage(context, message)
     }
 
+    /**
+     * Sends message that the opponent has scored.
+     */
     fun sendYouScored(context: Context) {
         val message = "scored"
         sendMessage(context, message)
     }
 
-    fun sendOpponentVictoryCondition(context: Context) {
-        val message = "youWon"
+    /**
+     * Sends message that opponent has won.
+     */
+    fun sendOpponentVictoryCondition(context: Context, livesLeft: Int) {
+        val message = "youWon${livesLeft}"
         sendMessage(context, message)
     }
 
+    /**
+     * Resets the instruction to empty string.
+     * This should be called after reading the instruction.
+     */
     fun resetInstruction() {
         _instruction.value = ""
     }
 
+    /**
+     * Sends message via Nearby Communication.
+     */
     private fun sendMessage(context: Context, message: String) {
         hostEndpoint?.let {
             Nearby.getConnectionsClient(context).sendPayload(it, Payload.fromBytes(message.toByteArray()))
@@ -71,17 +88,26 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     /**##### Discovery and Pairing #####**/
+    /**
+     * Stops search for peers.
+     */
     fun stopSearch(context: Context) {
         _connected.value = INACTIVE
         Nearby.getConnectionsClient(context).stopDiscovery()
         Nearby.getConnectionsClient(context).stopAdvertising()
     }
 
+    /**
+     * Starts search for peers.
+     */
     fun startSearch(context: Context) {
         advertise(context)
         discover(context)
     }
 
+    /**
+     * Disconnects from all endpoints.
+     */
     fun disconnect(context: Context) {
         _connected.value = NOT_CONNECTED
         Nearby.getConnectionsClient(context).stopAllEndpoints()
