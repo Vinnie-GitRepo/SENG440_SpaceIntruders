@@ -11,7 +11,7 @@ import com.example.spaceintruders.R
 import com.example.spaceintruders.services.Endpoint
 
 class WifiPeersRecyclerViewAdapter(private val connectListener: OnConnectListener): RecyclerView.Adapter<WifiPeersRecyclerViewAdapter.ItemViewHolder>() {
-    val values: ArrayList<Endpoint> = arrayListOf()
+    private var values: List<Endpoint> = arrayListOf()
 
     class ItemViewHolder(view: View, connectListener: OnConnectListener) : RecyclerView.ViewHolder(view) {
         lateinit var endpoint: Endpoint
@@ -38,10 +38,10 @@ class WifiPeersRecyclerViewAdapter(private val connectListener: OnConnectListene
         holder.deviceNameText.text = values[position].name
     }
 
-//    fun setData(data: List<Endpoint>) {
-//        values = data
-//        notifyDataSetChanged()
-//    }
+    fun setData(data: List<Endpoint>) {
+        values = data
+        notifyDataSetChanged()
+    }
 
     interface OnConnectListener {
         fun onConnClick(device: Endpoint)
