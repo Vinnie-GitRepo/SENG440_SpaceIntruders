@@ -96,6 +96,7 @@ class PairingFragment : Fragment(), WifiPeersRecyclerViewAdapter.OnConnectListen
                     loadingCircle.visibility = View.INVISIBLE
                     val color = -0x5fa81b
                     loadingCircle.indeterminateDrawable.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+                    Log.d("", "navigating to game")
                     findNavController().navigate(R.id.action_pairingFragment_to_gameFragment)
                 }
                 NearbyCommunication.DISCOVERY_FAILED -> {

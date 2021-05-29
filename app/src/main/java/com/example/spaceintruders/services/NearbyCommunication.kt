@@ -8,6 +8,7 @@ import androidx.collection.SimpleArrayMap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.spaceintruders.R
 import com.example.spaceintruders.gameentities.Bullet
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -77,7 +78,8 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
 
     /**##### Discovery and Pairing #####**/
     fun disconnect(context: Context) {
-        Nearby.getConnectionsClient(context).disconnectFromEndpoint(hostEndpoint!!)
+        _connected.value = NOT_CONNECTED
+        Nearby.getConnectionsClient(context).stopAllEndpoints()
     }
 
     fun advertise(context: Context) {
@@ -107,10 +109,10 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         Nearby.getConnectionsClient(context)
             .requestConnection("CLIENT", endpoint.id, connectionListener)
             .addOnSuccessListener {
-                Toast.makeText(context, "Connected to ${endpoint.name}.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.peer_connected), Toast.LENGTH_LONG).show()
             }
             .addOnFailureListener {
-                Toast.makeText(context, "Rejected by ${endpoint.name}.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.rejected), Toast.LENGTH_LONG).show()
             }
     }
 
@@ -139,6 +141,8 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             override fun onConnectionResult(endpoint: String, result: ConnectionResolution) {
                 when (result.status.statusCode) {
                     ConnectionsStatusCodes.STATUS_OK -> {
+                        Nearby.getConnectionsClient(context).stopDiscovery()
+                        Nearby.getConnectionsClient(context).stopAdvertising()
                         hostEndpoint = endpoint
                         _connected.value = CONNECTED
                     }
@@ -153,6 +157,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
 
             override fun onDisconnected(endpoint: String) {
                 _connected.value = NOT_CONNECTED
+                Toast.makeText(context, context.getString(R.string.unexpectedDisconnect), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -167,5 +172,6 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         const val DISCOVERY_FAILED = 3
         const val CONNECTION_FAILED = 4
         const val CONNECTING = 5
+        const val DISCONNECTED = 6
     }
 }

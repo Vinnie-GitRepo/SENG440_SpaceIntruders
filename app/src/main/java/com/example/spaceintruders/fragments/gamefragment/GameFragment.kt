@@ -2,6 +2,8 @@ package com.example.spaceintruders.fragments.gamefragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -25,8 +27,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.example.spaceintruders.R
 import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.util.AppUtil.getColorFromAttr
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 import java.lang.NumberFormatException
@@ -80,7 +85,15 @@ class GameFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.exitTitle))
+                    .setMessage(getString(R.string.exitText))
+                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                        nearbyCommunication.disconnect(requireContext())
+                    }
+                    .setNegativeButton(getString(R.string.no), null).show()
+                dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
+                dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(callback)
@@ -103,7 +116,8 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        nearbyCommunication.instruction.observe(viewLifecycleOwner) {parseInstruction(it)}
+        nearbyCommunication.connected.observe(viewLifecycleOwner) { if (it == NearbyCommunication.NOT_CONNECTED) findNavController().popBackStack() }
+        nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }
         return gameSurfaceView
     }
 
