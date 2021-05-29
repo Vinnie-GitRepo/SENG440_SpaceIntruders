@@ -40,4 +40,8 @@
     <string name="username_label">Username</string>
     <string name="save_settings_button_text">Save Colour</string>
     <string name="ship_preview">Ship Preview</string>
+    <string name="visit_player_name_string">Player2</string>
+    <string name="visit_player_score_string">Score2</string>
+    <string name="home_player_score_string">Score1</string>
+    <string name="home_player_name_string">Player1</string>
 </resources>
