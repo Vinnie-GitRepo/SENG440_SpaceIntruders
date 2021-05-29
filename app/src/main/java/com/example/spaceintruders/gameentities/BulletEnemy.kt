@@ -25,6 +25,13 @@ class BulletEnemy(screenX: Int, screenY: Int, res: Resources, startPositionY: Fl
     }
 
     override fun draw(canvas: Canvas) {
-        canvas.drawBitmap(image, (screenX.toFloat()*positionX)-(width/2), (screenY.toFloat()*positionY)-(height/2), paint)
+        if (!travelComplete()) {
+            canvas.drawBitmap(
+                image,
+                (screenX.toFloat() * positionX) - (width / 2),
+                (screenY.toFloat() * positionY) - (height / 2),
+                paint
+            )
+        }
     }
 }

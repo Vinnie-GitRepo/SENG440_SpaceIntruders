@@ -16,9 +16,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -75,12 +73,12 @@ class GameFragment : Fragment() {
         sensorManager.unregisterListener(gravityListener)
     }
 
-    @SuppressLint("SourceLockedOrientationActivity")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Create game view
-        val point = getScreenDimensions(requireActivity())
-        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
+
+
 
         // Create sensor manager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -93,14 +91,16 @@ class GameFragment : Fragment() {
 
     private fun navigateToEndGame() {
         findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
-        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val dialog = AlertDialog.Builder(requireContext())
@@ -119,7 +119,7 @@ class GameFragment : Fragment() {
         nearbyCommunication.connected.observe(viewLifecycleOwner) {
             if (it == NearbyCommunication.NOT_CONNECTED) {
                 findNavController().popBackStack()
-                requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
             }
         }
         nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }
@@ -130,17 +130,43 @@ class GameFragment : Fragment() {
                 navigateToEndGame()
             }
         }
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            val controller = requireActivity().window.insetsController
+            controller?.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+            controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
+        val point = getScreenDimensions(requireActivity())
+        gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
+        gameSurfaceView.resume()
         return gameSurfaceView
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        gameSurfaceView.pause()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            val controller = requireActivity().window.insetsController
+            controller?.show(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+            controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_BARS_BY_SWIPE
+        }
+        requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     override fun onPause() {
         super.onPause()
-        gameSurfaceView.pause()
+
     }
 
     override fun onResume() {
         super.onResume()
-        gameSurfaceView.resume()
+
     }
 
     /**
@@ -150,8 +176,10 @@ class GameFragment : Fragment() {
     private fun getScreenDimensions(activity: Activity): Point {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val rect = Rect()
-            activity.window.decorView.getWindowVisibleDisplayFrame(rect)
-            Point(rect.width(), rect.height())
+            val point = Point()
+            activity.display!!.getRealSize(point)
+            return point
+//            Point(rect.width(), rect.height())
         } else {
             val displayMetrics = DisplayMetrics()
             activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
