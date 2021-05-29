@@ -74,8 +74,10 @@ class GameFragment : Fragment() {
             }
         } else if (instruction.startsWith("youwon")) {
             findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+            nearbyCommunication.resetInstruction()
         } else if (instruction.startsWith("scored")) {
             gameViewModel.enemyScored()
+            nearbyCommunication.resetInstruction()
         }
     }
 
