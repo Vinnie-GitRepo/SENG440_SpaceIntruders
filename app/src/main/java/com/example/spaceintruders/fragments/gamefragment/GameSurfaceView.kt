@@ -15,14 +15,11 @@ import com.example.spaceintruders.util.BulletCollection
 import com.example.spaceintruders.viewmodels.GameViewModel
 import com.example.spaceintruders.viewmodels.WifiViewModel
 
-class GameSurfaceView(context: Context, val screenX: Int, val screenY: Int, private val nearbyCommunication: NearbyCommunication, private val gameViewModel: GameViewModel) : SurfaceView(context) {
+class GameSurfaceView(context: Context, private val screenX: Int, private val screenY: Int, private val nearbyCommunication: NearbyCommunication, private val gameViewModel: GameViewModel) : SurfaceView(context) {
     private lateinit var thread: Thread
     private var running: Boolean = false
     private val paint: Paint = Paint()
-    val screenRatioX: Float = 0f
-    val screenRatioY: Float = 0f
-    val screenScaleX: Float = screenX / 1000f
-    val screenScaleY: Float = screenY / 1000f
+
     var tilt: Float = 0f
     private val bullets: BulletCollection = BulletCollection()
 

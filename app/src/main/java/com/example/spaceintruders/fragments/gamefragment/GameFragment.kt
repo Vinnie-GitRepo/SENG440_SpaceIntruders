@@ -72,6 +72,10 @@ class GameFragment : Fragment() {
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
+        } else if (instruction.startsWith("youwon")) {
+            findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+        } else if (instruction.startsWith("scored")) {
+            gameViewModel.enemyScored()
         }
     }
 
@@ -83,20 +87,6 @@ class GameFragment : Fragment() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                val dialog = AlertDialog.Builder(requireContext())
-                    .setTitle(getString(R.string.exitTitle))
-                    .setMessage(getString(R.string.exitText))
-                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                        nearbyCommunication.disconnect(requireContext())
-                    }
-                    .setNegativeButton(getString(R.string.no), null).show()
-                dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
-                dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(callback)
         // Create game view
         val point = getScreenDimensions(requireActivity())
         gameSurfaceView = GameSurfaceView(requireContext(), point.x, point.y, nearbyCommunication, gameViewModel)
@@ -116,8 +106,30 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.exitTitle))
+                    .setMessage(getString(R.string.exitText))
+                    .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                        nearbyCommunication.disconnect(requireContext())
+                    }
+                    .setNegativeButton(getString(R.string.no), null).show()
+                dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
+                dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(getColorFromAttr(requireContext(), R.attr.colorOnSecondary))
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
         nearbyCommunication.connected.observe(viewLifecycleOwner) { if (it == NearbyCommunication.NOT_CONNECTED) findNavController().popBackStack() }
         nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }
+
+        gameViewModel.scoreVisitPlayer.observe(viewLifecycleOwner) {
+            if (it >= 3) {
+                nearbyCommunication.sendOpponentVictoryCondition(requireContext())
+                findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
+            }
+        }
         return gameSurfaceView
     }
 

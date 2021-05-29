@@ -62,7 +62,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         sendMessage(context, message)
     }
 
-    fun sendVictoryCondition(context: Context) {
+    fun sendOpponentVictoryCondition(context: Context) {
         val message = "youwon"
         sendMessage(context, message)
     }
