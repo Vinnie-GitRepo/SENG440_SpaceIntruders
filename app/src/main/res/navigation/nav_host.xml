@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_menuFragment_to_pairingFragment"
             app:destination="@id/pairingFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_gameRecordFragment"
+            app:destination="@id/gameRecordFragment" />
     </fragment>
     <fragment
         android:id="@+id/pairingFragment"
@@ -41,4 +44,8 @@
             android:id="@+id/action_endGameFragment_to_menuFragment2"
             app:destination="@id/menuFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/gameRecordFragment"
+        android:name="com.example.spaceintruders.fragments.recordFragment.GameRecordFragment"
+        android:label="GameRecordFragment" />
 </navigation>
