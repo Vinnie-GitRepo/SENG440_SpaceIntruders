@@ -59,4 +59,7 @@
     <string name="share_your_results">Share Your Results</string>
     <string name="logo_image_text">Logo Image</string>
     <string name="lives">LIVES: %s</string>
+    <string name="victory_text">hard-won victory!</string>
+    <string name="defeat_text">crushing defeat!</string>
+    <string name="share_text_template">I just battled against %1$s in an intense match of Space Intruders! I experienced a %2$s</string>
 </resources>

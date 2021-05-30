@@ -58,16 +58,15 @@ class EndGameFragment : Fragment() {
         var opponent = visitName.text
         var result = ""
         if(gameViewModel.scoreHomePlayer.value.toString() == "3"){
-            result = "hard-won victory!"
+            result = R.string.victory_text.toString()
         } else {
-            result = "crushing defeat!"
+            result = R.string.defeat_text.toString()
         }
 
 
         val shareButton = view.findViewById<Button>(R.id.shareButton)
         shareButton.setOnClickListener {
-            var shareText =
-                "I just battled against $opponent in an intense match of Space Intruders! I experienced a $result"
+            var shareText = String.format(resources.getString(R.string.share_text_template, opponent, result))
 
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
