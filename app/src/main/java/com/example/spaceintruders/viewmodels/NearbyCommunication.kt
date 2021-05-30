@@ -1,12 +1,14 @@
-package com.example.spaceintruders.services
+package com.example.spaceintruders.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
 import com.example.spaceintruders.R
 import com.example.spaceintruders.gameentities.Bullet
 import com.google.android.gms.nearby.Nearby
@@ -29,6 +31,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
 
     /**##### Variables #####**/
     private var hostEndpoint: String? = null
+    private var endpointName: String? = null
 
     /**##### Listeners #####**/
     private lateinit var connectionListener: ConnectionLifecycleCallback
@@ -49,6 +52,10 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
      * Sends message that a bullet has been sent and at what X coordinate.
      * E.g. bullet0.9983
      */
+    fun getOpponentName() : String? {
+        return endpointName
+    }
+
     fun sendBullet(context: Context, bullet: Bullet) {
         val message = "bullet${bullet.positionX}"
         sendMessage(context, message)
@@ -57,8 +64,8 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     /**
      * Sends message that the opponent has scored.
      */
-    fun sendYouScored(context: Context) {
-        val message = "scored"
+    fun sendYourScore(context: Context, score: Int) {
+        val message = "endScore${score}"
         sendMessage(context, message)
     }
 
@@ -140,9 +147,12 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     fun joinHost(context: Context, endpoint: Endpoint) {
         val oldValue = _connected.value
         _connected.value = CONNECTING
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val user = sharedPref.getString("username", "Client")!!
         Nearby.getConnectionsClient(context)
-            .requestConnection("CLIENT", endpoint.id, connectionListener)
+            .requestConnection(user, endpoint.id, connectionListener)
             .addOnSuccessListener {
+                endpointName = endpoint.name
                 Toast.makeText(context, context.getString(R.string.peer_connected), Toast.LENGTH_LONG).show()
             }
             .addOnFailureListener {
@@ -171,6 +181,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
             override fun onConnectionInitiated(id: String, info: ConnectionInfo) {
                 Log.d("Connection", "Connection initiated")
                 Nearby.getConnectionsClient(context).acceptConnection(id, payloadListener)
+                endpointName = info.endpointName
             }
 
             override fun onConnectionResult(endpoint: String, result: ConnectionResolution) {

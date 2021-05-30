@@ -4,13 +4,10 @@
     <PreferenceCategory app:title="Settings">
 
         <EditTextPreference
+            android:id="@+id/username"
             app:key="username"
             app:title="Username"
             app:useSimpleSummaryProvider="true" />
-
-        <SwitchPreferenceCompat
-            app:key="darkswitch"
-            app:title="Dark Mode" />
 
         <SwitchPreferenceCompat
             app:key="notificationswitch"

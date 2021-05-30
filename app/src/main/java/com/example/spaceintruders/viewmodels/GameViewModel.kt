@@ -17,8 +17,8 @@ class GameViewModel : ViewModel() {
         _scoreVisitPlayer.postValue(_scoreVisitPlayer.value!!.plus(1))
     }
 
-    fun homeScored() {
-        _scoreHomePlayer.postValue(_scoreHomePlayer.value!!.plus(1))
+    fun setHomeScore(score: Int) {
+        _scoreHomePlayer.postValue(score)
     }
 
     fun reset() {
