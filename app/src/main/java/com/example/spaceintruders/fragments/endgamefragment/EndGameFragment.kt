@@ -1,5 +1,6 @@
 package com.example.spaceintruders.fragments.endgamefragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -53,6 +54,30 @@ class EndGameFragment : Fragment() {
         visitName.text = nearbyCommunication.getOpponentName()!!
         homeScore.text = gameViewModel.scoreHomePlayer.value.toString()
         visitScore.text = gameViewModel.scoreVisitPlayer.value.toString()
+
+        var opponent = visitName.text
+        var result = ""
+        if(gameViewModel.scoreHomePlayer.value.toString() == "3"){
+            result = "hard-won victory!"
+        } else {
+            result = "crushing defeat!"
+        }
+
+
+        val shareButton = view.findViewById<Button>(R.id.shareButton)
+        shareButton.setOnClickListener {
+            var shareText =
+                "I just battled against $opponent in an intense match of Space Intruders! I experienced a $result"
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shareText)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+        }
 
         return view
     }

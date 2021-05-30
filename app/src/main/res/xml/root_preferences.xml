@@ -1,8 +1,6 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="Settings">
-
         <EditTextPreference
             android:id="@+id/username"
             app:key="username"
@@ -20,6 +18,6 @@
                 android:targetClass="com.example.spaceintruders.activities.ColorPickerActivity"
                 />
         </Preference>
-    </PreferenceCategory>
+
 
 </PreferenceScreen>

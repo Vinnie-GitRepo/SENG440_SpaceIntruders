@@ -56,4 +56,6 @@
     <string name="home_player_name_string">Player1</string>
     <string name="you">You</string>
     <string name="colour_change">Change Ship Colour</string>
+    <string name="share_your_results">Share Your Results</string>
+    <string name="logo_image_text">Logo Image</string>
 </resources>

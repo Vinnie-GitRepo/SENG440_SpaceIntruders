@@ -30,26 +30,6 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        var opponent = "Vinnie"
-        var result = "hard-won victory and"
-        var score = 20000
-
-
-        var shareButton = findViewById<Button>(R.id.shareButton)
-        shareButton.setOnClickListener {
-            var shareText =
-                "I just battled against $opponent in an intense match of Space Intruders! I had a $result got a score of $score!"
-
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, shareText)
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        }
-
 
     }
 

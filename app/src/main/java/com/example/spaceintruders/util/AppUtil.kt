@@ -1,9 +1,11 @@
 package com.example.spaceintruders.util
 
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat.startActivity
 
 object AppUtil {
     /**

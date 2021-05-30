@@ -55,13 +55,24 @@
         app:layout_constraintTop_toBottomOf="@+id/nameHome"
         app:layout_constraintVertical_bias="0.201" />
 
+    <Button
+        android:id="@+id/shareButton"
+        style="@android:style/Widget.DeviceDefault.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:text="@string/share_your_results"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/endGame_returnButton" />
+
     <TextView
         android:id="@+id/scoreHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/nameHome"
-        app:layout_constraintStart_toStartOf="@+id/nameHome"
-        app:layout_constraintTop_toBottomOf="@+id/nameHome" />
+        tools:layout_editor_absoluteX="156dp"
+        tools:layout_editor_absoluteY="506dp" />
 
     <TextView
         android:id="@+id/scoreVisit"
