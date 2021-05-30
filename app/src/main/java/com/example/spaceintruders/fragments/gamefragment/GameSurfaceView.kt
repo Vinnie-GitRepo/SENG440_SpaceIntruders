@@ -1,9 +1,11 @@
 package com.example.spaceintruders.fragments.gamefragment
 
 import android.content.Context
+import android.content.res.AssetManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -11,6 +13,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
+import androidx.core.content.res.ResourcesCompat
 import com.example.spaceintruders.R
 import com.example.spaceintruders.gameentities.*
 import com.example.spaceintruders.util.BulletCollection
@@ -23,7 +26,8 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
     private var running: Boolean = false
     private val paint: Paint = Paint()
     private val textPaint: Paint = Paint()
-
+    private val typeface: Typeface = ResourcesCompat.getFont(context, R.font.orbitron)!!
+// Typeface.createFromAsset(context.resources.assets, context.getpaR.font.orbitron)
     var tilt: Float = 0f
     private var canShootSmall = 0
     private var canShootbig = 0
@@ -163,6 +167,7 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
             }
             textPaint.color = Color.WHITE
             textPaint.textSize = 100f
+            textPaint.typeface = typeface
             canvas.drawText(context.getString(R.string.lives).format((3 - gameViewModel.scoreVisitPlayer.value!!).toString()), screenX/10f, screenX/15f, textPaint)
             holder.unlockCanvasAndPost(canvas)
             invalidate()
