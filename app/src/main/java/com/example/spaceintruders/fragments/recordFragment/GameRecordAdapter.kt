@@ -31,7 +31,14 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
             textViewVisitPlayerName = itemView.findViewById(R.id.visit_player_name_text)
             textViewVisitPlayerScore = itemView.findViewById(R.id.visit_player_score_text)
 
+        }
 
+        fun setup(gameRecord: GameRecord) {
+            textViewHomePlayerName.text = gameRecord.homePlayerName
+            textViewHomePlayerScore.text = gameRecord.homePlayerName
+
+            textViewVisitPlayerName.text = gameRecord.homePlayerName
+            textViewVisitPlayerScore.text = gameRecord.homePlayerName
         }
 
         override fun onClick(view: View?) {
@@ -50,11 +57,14 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     }
 
     override fun onBindViewHolder(viewHolder: GameRecordViewHolder, position: Int) {
-        viewHolder.textViewHomePlayerName.text = values[position].homePlayerName
-        viewHolder.textViewHomePlayerScore.text = values[position].homePlayerName
+//        viewHolder.textViewHomePlayerName.text = values[position].homePlayerName
+//        viewHolder.textViewHomePlayerScore.text = values[position].homePlayerName
+//
+//        viewHolder.textViewVisitPlayerName.text = values[position].homePlayerName
+//        viewHolder.textViewVisitPlayerScore.text = values[position].homePlayerName
 
-        viewHolder.textViewVisitPlayerName.text = values[position].homePlayerName
-        viewHolder.textViewVisitPlayerScore.text = values[position].homePlayerName
+        viewHolder.setup(values[position])
+
     }
 
     override fun getItemCount() = values.size
