@@ -31,8 +31,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         readAllData = repository.readAllData
     }
 
-    fun addGameRecord(homePlayerName: String, visitPlayerName: String) {
-        val gameRecord = GameRecord(null, homePlayerName, scoreHomePlayer.value!!, visitPlayerName, scoreVisitPlayer.value!!)
+    fun addGameRecord(homePlayerName: String, homePlayerScore: Int, visitPlayerName: String, visitPlayerScore: Int) {
+        val gameRecord = GameRecord(null, homePlayerName, homePlayerScore, visitPlayerName, visitPlayerScore)
         viewModelScope.launch(Dispatchers.IO) {
             repository.addGameRecord(gameRecord)
         }

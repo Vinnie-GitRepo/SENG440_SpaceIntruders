@@ -60,8 +60,9 @@ class EndGameFragment : Fragment() {
 
     private fun returnToHomeScreen() {
         findNavController().navigate(R.id.action_endGameFragment_to_menuFragment2)
+        gameViewModel.addGameRecord(getString(R.string.you), gameViewModel.scoreHomePlayer.value!!, nearbyCommunication.getOpponentName()!!, gameViewModel.scoreVisitPlayer.value!!)
         gameViewModel.reset()
         nearbyCommunication.disconnect(requireContext())
-        gameViewModel.addGameRecord(getString(R.string.you), nearbyCommunication.getOpponentName()!!)
+
     }
 }
