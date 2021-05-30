@@ -60,6 +60,7 @@ class GameFragment : Fragment() {
         } else if (instruction.startsWith("youWon")) {
             try {
                 val number = instruction.removePrefix("youWon")
+                gameViewModel
 
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
