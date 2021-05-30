@@ -1,22 +1,10 @@
 package com.example.spaceintruders.activities
 
-import android.app.Activity
 import android.content.Intent
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.media.Image
 import android.os.Bundle
-import android.preference.PreferenceActivity
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragment
-import androidx.fragment.app.Fragment
-import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceViewHolder
 import com.example.spaceintruders.R
 
 
