@@ -58,11 +58,10 @@ class EndGameFragment : Fragment() {
         var opponent = visitName.text
         var result = ""
         if(gameViewModel.scoreHomePlayer.value.toString() == "3"){
-            result = R.string.victory_text.toString()
+            result = resources.getString(R.string.victory_text)
         } else {
-            result = R.string.defeat_text.toString()
+            result = resources.getString(R.string.defeat_text)
         }
-
 
         val shareButton = view.findViewById<Button>(R.id.shareButton)
         shareButton.setOnClickListener {
