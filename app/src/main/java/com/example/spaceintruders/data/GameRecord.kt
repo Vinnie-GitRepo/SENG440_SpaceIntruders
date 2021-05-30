@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  */
 @Entity
 data class GameRecord(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
 
     //  Phone owner details
     val homePlayerName: String,

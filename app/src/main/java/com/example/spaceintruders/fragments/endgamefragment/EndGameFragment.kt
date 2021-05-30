@@ -21,7 +21,7 @@ import com.example.spaceintruders.viewmodels.GameViewModel
  */
 class EndGameFragment : Fragment() {
     private val gameViewModel: GameViewModel by activityViewModels()
-    private val nearbyCommunication: NearbyCommunication by activityViewModels()
+    private val nearbyCommunication: NearbyCommunication by activityViewModels() //Get names from here
     private lateinit var mainMenuButton: Button
 
     override fun onCreateView(
@@ -42,6 +42,7 @@ class EndGameFragment : Fragment() {
         }
         return view
     }
+
 
     private fun returnToHomeScreen() {
         findNavController().navigate(R.id.action_endGameFragment_to_menuFragment2)
