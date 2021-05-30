@@ -21,7 +21,7 @@
         android:theme="@style/Theme.SpaceIntruders">
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/settingsTitle"
             android:theme="@style/Theme.AppCompat"/>
 
         <activity
@@ -33,6 +33,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".activities.ColorPickerActivity"
+            android:label="@string/colour_change"
+            android:theme="@style/Theme.AppCompat"/>
 
         <activity
             android:name=".activities.MainActivity"

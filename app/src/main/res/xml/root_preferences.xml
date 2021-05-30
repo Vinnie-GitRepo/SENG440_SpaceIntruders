@@ -13,14 +13,13 @@
             app:key="notificationswitch"
             app:title="Notifications" />
 
-<!--        <ListPreference-->
-<!--            app:defaultValue="reply"-->
-<!--            app:entries="@array/reply_entries"-->
-<!--            app:entryValues="@array/reply_values"-->
-<!--            app:key="reply"-->
-<!--            app:title="Placeholder"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
+        <Preference
+            android:title="@string/colour_change" >
+            <intent
+                android:targetPackage="com.example.spaceintruders"
+                android:targetClass="com.example.spaceintruders.activities.ColorPickerActivity"
+                />
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>
