@@ -62,5 +62,10 @@
     <string name="victory_text">hard-won victory!</string>
     <string name="defeat_text">crushing defeat!</string>
     <string name="share_text_template">I just battled against %1$s in an intense match of Space Intruders! I experienced a %2$s</string>
+    <string name="rules">Rules:</string>
+    <string name="controls">Controls:</string>
+    <string name="rules_text">The aim of the game is to get your missile to the bottom of you opponent’s screen. When a missile gets to the bottom of your screen you will lose a life. Each player has three lives, the first person to get the opponent down to zero wins.</string>
+    <string name="controls_text">To move your ship, tilt the phone from side to side. To shoot across to your enemy, do a swipe up action. To intercept your opponents missiles, fire a bullet by clicking the screen.</string>
+    <string name="info">How to play</string>
     <string name="share">SHARE</string>
 </resources>

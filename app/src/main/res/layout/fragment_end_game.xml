@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/you"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/nameVisit"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/you"
-        android:textSize="34sp"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/nameHome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -71,14 +71,17 @@
         android:id="@+id/scoreHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="506dp" />
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="@+id/nameHome"
+        app:layout_constraintStart_toStartOf="@+id/nameHome"
+        app:layout_constraintTop_toBottomOf="@+id/nameHome" />
 
     <TextView
         android:id="@+id/scoreVisit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/scoreHome"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="@+id/nameVisit"
-        app:layout_constraintStart_toStartOf="@+id/nameVisit" />
+        app:layout_constraintStart_toStartOf="@+id/nameVisit"
+        app:layout_constraintTop_toBottomOf="@+id/nameVisit" />
 </androidx.constraintlayout.widget.ConstraintLayout>

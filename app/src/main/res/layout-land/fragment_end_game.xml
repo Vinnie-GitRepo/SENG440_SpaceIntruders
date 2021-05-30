@@ -78,7 +78,7 @@
         android:id="@+id/scoreVisit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/scoreHome"
         app:layout_constraintEnd_toEndOf="@+id/nameVisit"
-        app:layout_constraintStart_toStartOf="@+id/nameVisit" />
+        app:layout_constraintStart_toStartOf="@+id/nameVisit"
+        app:layout_constraintTop_toBottomOf="@+id/nameVisit" />
 </androidx.constraintlayout.widget.ConstraintLayout>

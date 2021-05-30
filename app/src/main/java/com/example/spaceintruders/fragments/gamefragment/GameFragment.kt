@@ -125,7 +125,7 @@ class GameFragment : Fragment() {
         nearbyCommunication.connected.observe(viewLifecycleOwner) {
             if (it == NearbyCommunication.NOT_CONNECTED) {
                 findNavController().popBackStack()
-
+                gameViewModel.reset()
             }
         }
         nearbyCommunication.instruction.observe(viewLifecycleOwner) { parseInstruction(it) }

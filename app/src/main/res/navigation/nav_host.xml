@@ -41,8 +41,7 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.example.spaceintruders.fragments.gamefragment.GameFragment"
-        android:label="fragment_game"
-        tools:layout="@layout/fragment_game" >
+        android:label="fragment_game" >
         <action
             android:id="@+id/action_gameFragment_to_endGameFragment"
             app:destination="@id/endGameFragment"
@@ -68,8 +67,4 @@
         android:id="@+id/gameRecordFragment"
         android:name="com.example.spaceintruders.fragments.recordFragment.GameRecordFragment"
         android:label="GameRecordFragment" />
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.spaceintruders.activities.SettingsActivity.SettingsFragment"
-        android:label="SettingsFragment" />
 </navigation>

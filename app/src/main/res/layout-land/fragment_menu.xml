@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     android:background="@drawable/bigstarsmobile">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/home_tutorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:clickable="true"
+        app:backgroundTint="@color/purple_300"
+        app:layout_constraintStart_toEndOf="@+id/home_SettingsButton"
+        app:layout_constraintTop_toTopOf="@+id/home_SettingsButton"
+        app:srcCompat="@drawable/ic_baseline_info_24" />
+
     <ImageView
         android:id="@+id/home_ScreenImage"
         android:layout_width="386dp"
