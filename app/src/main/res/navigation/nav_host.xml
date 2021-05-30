@@ -68,4 +68,8 @@
         android:id="@+id/gameRecordFragment"
         android:name="com.example.spaceintruders.fragments.recordFragment.GameRecordFragment"
         android:label="GameRecordFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.spaceintruders.activities.SettingsActivity.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>

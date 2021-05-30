@@ -12,5 +12,13 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:textViewStyle">@style/OrbitronTextViewStyle</item>
+        <item name="android:buttonStyle">@style/OrbitronButtonStyle</item>
+    </style>
+    <style name="OrbitronTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/orbitron</item>
+    </style>
+    <style name="OrbitronButtonStyle" parent="android:Widget.Button">
+        <item name="android:fontFamily">@font/orbitron</item>
     </style>
 </resources>
