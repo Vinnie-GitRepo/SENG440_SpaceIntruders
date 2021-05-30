@@ -54,9 +54,6 @@ class EndGameFragment : Fragment() {
         homeScore.text = gameViewModel.scoreHomePlayer.value.toString()
         visitScore.text = gameViewModel.scoreVisitPlayer.value.toString()
 
-        gameViewModel.addGameRecord(getString(R.string.you), nearbyCommunication.getOpponentName()!!)
-//        gameViewModel.addGameRecord(getString(R.string.you), PreferenceManager.getDefaultSharedPreferences(application).getString("username", "client"))
-
         return view
     }
 
@@ -65,6 +62,6 @@ class EndGameFragment : Fragment() {
         findNavController().navigate(R.id.action_endGameFragment_to_menuFragment2)
         gameViewModel.reset()
         nearbyCommunication.disconnect(requireContext())
-        //TODO @@@@@@@@ Add saving of game stats @@@@@@@@
+        gameViewModel.addGameRecord(getString(R.string.you), nearbyCommunication.getOpponentName()!!)
     }
 }
