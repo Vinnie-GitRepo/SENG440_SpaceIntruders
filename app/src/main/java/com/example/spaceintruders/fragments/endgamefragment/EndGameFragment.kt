@@ -20,7 +20,7 @@ import org.w3c.dom.Text
  */
 class EndGameFragment : Fragment() {
     private val gameViewModel: GameViewModel by activityViewModels()
-    private val nearbyCommunication: NearbyCommunication by activityViewModels()
+    private val nearbyCommunication: NearbyCommunication by activityViewModels() //Get names from here
     private lateinit var mainMenuButton: Button
     private lateinit var homeName: TextView
     private lateinit var visitName: TextView
@@ -57,10 +57,12 @@ class EndGameFragment : Fragment() {
         return view
     }
 
+
     private fun returnToHomeScreen() {
         findNavController().navigate(R.id.action_endGameFragment_to_menuFragment2)
+        gameViewModel.addGameRecord(getString(R.string.you), gameViewModel.scoreHomePlayer.value!!, nearbyCommunication.getOpponentName()!!, gameViewModel.scoreVisitPlayer.value!!)
         gameViewModel.reset()
         nearbyCommunication.disconnect(requireContext())
-        //TODO @@@@@@@@ Add saving of game stats @@@@@@@@
+
     }
 }

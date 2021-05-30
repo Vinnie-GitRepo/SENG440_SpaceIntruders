@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
 import com.example.spaceintruders.data.GameRecord
 
-class GameRecordAdapter(private val gameRecords: Array<GameRecord>, private val onGameRecordListener: OnGameRecordListener)
+class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     : RecyclerView.Adapter<GameRecordAdapter.GameRecordViewHolder>() {
 
+    private var values: List<GameRecord> = emptyList()
 
-    class GameRecordViewHolder(itemView: View, private val onGameRecordListener: OnGameRecordListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class GameRecordViewHolder(itemView: View, private val onGameRecordListener: OnGameRecordListener)
+        : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         val textViewHomePlayerName: TextView
         val textViewHomePlayerScore: TextView
@@ -21,6 +23,8 @@ class GameRecordAdapter(private val gameRecords: Array<GameRecord>, private val 
         val textViewVisitPlayerScore: TextView
 
         init {
+            itemView.setOnClickListener(this)
+
             textViewHomePlayerName = itemView.findViewById(R.id.home_player_name_text)
             textViewHomePlayerScore = itemView.findViewById(R.id.home_player_score_text)
 
@@ -40,15 +44,20 @@ class GameRecordAdapter(private val gameRecords: Array<GameRecord>, private val 
         return GameRecordViewHolder(view, onGameRecordListener)
     }
 
-    override fun onBindViewHolder(viewHolder: GameRecordViewHolder, position: Int) {
-        viewHolder.textViewHomePlayerName.text = gameRecords[position].homePlayerName
-        viewHolder.textViewHomePlayerScore.text = gameRecords[position].homePlayerName
-
-        viewHolder.textViewVisitPlayerName.text = gameRecords[position].homePlayerName
-        viewHolder.textViewVisitPlayerScore.text = gameRecords[position].homePlayerName
+    fun setData(newData: List<GameRecord>) {
+        values = newData
+        notifyDataSetChanged()
     }
 
-    override fun getItemCount() = gameRecords.size
+    override fun onBindViewHolder(viewHolder: GameRecordViewHolder, position: Int) {
+        viewHolder.textViewHomePlayerName.text = values[position].homePlayerName
+        viewHolder.textViewHomePlayerScore.text = values[position].homePlayerName
+
+        viewHolder.textViewVisitPlayerName.text = values[position].homePlayerName
+        viewHolder.textViewVisitPlayerScore.text = values[position].homePlayerName
+    }
+
+    override fun getItemCount() = values.size
 
     interface OnGameRecordListener {
         fun onGameRecordClick(position: Int)
