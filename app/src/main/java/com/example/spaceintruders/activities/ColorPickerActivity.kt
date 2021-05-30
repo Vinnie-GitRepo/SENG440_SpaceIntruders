@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.apandroid.colorwheel.ColorWheel
 import com.example.spaceintruders.R
@@ -48,5 +49,10 @@ class ColorPickerActivity : AppCompatActivity() {
     fun loadSettings(view: View) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         colour = sharedPref.getInt("colour", Color.rgb(255, 255, 255))
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 }
