@@ -12,6 +12,12 @@
 
     </FrameLayout>
 
+    <Button
+        android:id="@+id/shareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test  Sharing" />
+
     <ImageView
         android:id="@+id/shipImage"
         android:layout_width="25dp"
