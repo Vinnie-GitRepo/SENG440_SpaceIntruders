@@ -16,11 +16,11 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     class GameRecordViewHolder(itemView: View, private val onGameRecordListener: OnGameRecordListener)
         : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-        val textViewHomePlayerName: TextView
-        val textViewHomePlayerScore: TextView
+        private val textViewHomePlayerName: TextView
+        private val textViewHomePlayerScore: TextView
 
-        val textViewVisitPlayerName: TextView
-        val textViewVisitPlayerScore: TextView
+        private val textViewVisitPlayerName: TextView
+        private val textViewVisitPlayerScore: TextView
 
         init {
             itemView.setOnClickListener(this)
@@ -57,14 +57,7 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     }
 
     override fun onBindViewHolder(viewHolder: GameRecordViewHolder, position: Int) {
-//        viewHolder.textViewHomePlayerName.text = values[position].homePlayerName
-//        viewHolder.textViewHomePlayerScore.text = values[position].homePlayerName
-//
-//        viewHolder.textViewVisitPlayerName.text = values[position].homePlayerName
-//        viewHolder.textViewVisitPlayerScore.text = values[position].homePlayerName
-
         viewHolder.setup(values[position])
-
     }
 
     override fun getItemCount() = values.size
