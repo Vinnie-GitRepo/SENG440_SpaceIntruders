@@ -35,10 +35,10 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
 
         fun setup(gameRecord: GameRecord) {
             textViewHomePlayerName.text = gameRecord.homePlayerName
-            textViewHomePlayerScore.text = gameRecord.homePlayerName
+            textViewHomePlayerScore.text = gameRecord.homePlayerScore.toString()
 
-            textViewVisitPlayerName.text = gameRecord.homePlayerName
-            textViewVisitPlayerScore.text = gameRecord.homePlayerName
+            textViewVisitPlayerName.text = gameRecord.visitPlayerName
+            textViewVisitPlayerScore.text = gameRecord.visitPlayerScore.toString()
         }
 
         override fun onClick(view: View?) {
