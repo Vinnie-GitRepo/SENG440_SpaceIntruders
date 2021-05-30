@@ -3,6 +3,7 @@ package com.example.spaceintruders.fragments.recordFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
@@ -16,24 +17,31 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     class GameRecordViewHolder(itemView: View, private val onGameRecordListener: OnGameRecordListener)
         : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
+        private lateinit var gameRecord: GameRecord
+
         private val textViewHomePlayerName: TextView
         private val textViewHomePlayerScore: TextView
 
         private val textViewVisitPlayerName: TextView
         private val textViewVisitPlayerScore: TextView
 
-        init {
-            itemView.setOnClickListener(this)
+        private val shareBtn: Button
 
+        init {
             textViewHomePlayerName = itemView.findViewById(R.id.home_player_name_text)
             textViewHomePlayerScore = itemView.findViewById(R.id.home_player_score_text)
 
             textViewVisitPlayerName = itemView.findViewById(R.id.visit_player_name_text)
             textViewVisitPlayerScore = itemView.findViewById(R.id.visit_player_score_text)
 
+            shareBtn = itemView.findViewById(R.id.scores_share_button)
+            shareBtn.setOnClickListener {
+                onGameRecordListener.onGameRecordClick(gameRecord)
+            }
         }
 
         fun setup(gameRecord: GameRecord) {
+            this.gameRecord = gameRecord
             textViewHomePlayerName.text = gameRecord.homePlayerName
             textViewHomePlayerScore.text = gameRecord.homePlayerScore.toString()
 
@@ -41,8 +49,8 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
             textViewVisitPlayerScore.text = gameRecord.visitPlayerScore.toString()
         }
 
-        override fun onClick(view: View?) {
-            onGameRecordListener.onGameRecordClick(adapterPosition)
+        override fun onClick(v: View?) {
+
         }
     }
 
@@ -63,6 +71,6 @@ class GameRecordAdapter(private val onGameRecordListener: OnGameRecordListener)
     override fun getItemCount() = values.size
 
     interface OnGameRecordListener {
-        fun onGameRecordClick(position: Int)
+        fun onGameRecordClick(gameRecord: GameRecord)
     }
 }
