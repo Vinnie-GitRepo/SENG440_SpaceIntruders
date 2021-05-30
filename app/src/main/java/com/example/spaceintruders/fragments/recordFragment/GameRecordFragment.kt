@@ -29,7 +29,7 @@ class GameRecordFragment : Fragment(), GameRecordAdapter.OnGameRecordListener {
         }
 
 
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return view
     }
 
 

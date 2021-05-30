@@ -121,8 +121,10 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
     }
 
     private fun advertise(context: Context) {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val user = sharedPref.getString("username", android.os.Build.MODEL)!!
         val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_POINT_TO_POINT).build()
-        Nearby.getConnectionsClient(context).startAdvertising(android.os.Build.MODEL, "spaceIntruders", connectionListener, options)
+        Nearby.getConnectionsClient(context).startAdvertising(user, "spaceIntruders", connectionListener, options)
             .addOnSuccessListener {
                 Log.d("Success", "Success")
             }.addOnFailureListener {
@@ -148,7 +150,7 @@ class NearbyCommunication(application: Application) : AndroidViewModel(applicati
         val oldValue = _connected.value
         _connected.value = CONNECTING
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val user = sharedPref.getString("username", "Client")!!
+        val user = sharedPref.getString("username", android.os.Build.MODEL)!!
         Nearby.getConnectionsClient(context)
             .requestConnection(user, endpoint.id, connectionListener)
             .addOnSuccessListener {

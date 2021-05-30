@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.example.spaceintruders.R
 import com.example.spaceintruders.activities.SettingsActivity
+import com.example.spaceintruders.fragments.recordFragment.GameRecordFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
@@ -47,6 +49,10 @@ class MenuFragment : Fragment() {
         settingsButton.setOnClickListener {
             val intent = Intent(requireContext(), SettingsActivity::class.java)
             startActivity(intent)
+        }
+
+        scoreButton.setOnClickListener {
+            findNavController().navigate(R.id.action_menuFragment_to_gameRecordFragment)
         }
 
         return view
