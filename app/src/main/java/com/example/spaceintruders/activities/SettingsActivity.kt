@@ -30,16 +30,15 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-
-
         var opponent = "Vinnie"
         var result = "hard-won victory and"
         var score = 20000
 
 
         var shareButton = findViewById<Button>(R.id.shareButton)
-        shareButton.setOnClickListener{
-            var shareText = "I just battled against $opponent in an intense match of Space Intruders! I had a $result got a score of $score!"
+        shareButton.setOnClickListener {
+            var shareText =
+                "I just battled against $opponent in an intense match of Space Intruders! I had a $result got a score of $score!"
 
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -52,58 +51,8 @@ class SettingsActivity : AppCompatActivity() {
         }
 
 
-
-//        var saveSettingButton = findViewById<Button>(R.id.savesettingsbutton)
-//        saveSettingButton.setOnClickListener{
-//            saveSettings(findViewById(android.R.id.content))
-//        }
-
-
-    val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-    val notifsOn = sharedPref.getBoolean("notificationswitch", false)
-
-    notificationChannel()
-    val notifIntent = Intent(applicationContext, AlarmReceiver::class.java).let {
-        PendingIntent.getBroadcast(applicationContext, 0, it, 0)
-    }
-    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-    if(notifsOn) {
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 86400000, notifIntent)
-    }}
-
-    fun notificationChannel() {
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(Notification.CATEGORY_REMINDER, "Daily Reminder", importance).apply {
-            description = "A daily reminder to play Space Intruders"
-        }
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-
     }
 
-
-    class AlarmReceiver : BroadcastReceiver() {
-
-        @SuppressLint("ServiceCast")
-        override fun onReceive(context: Context, intent: Intent) {
-            val openAppIntent: PendingIntent = Intent(context, SplashScreen::class.java).run {
-                PendingIntent.getActivity(context, 0, this, 0)
-            }
-
-            val notification = Notification.Builder(context, Notification.CATEGORY_REMINDER).run {
-                setSmallIcon(R.drawable.ic_action_name)
-                setContentTitle("The Galaxy Needs you!")
-                setContentText("Why not play a friendly game of Space Intruders?")
-                setContentIntent(openAppIntent)
-                setAutoCancel(true)
-                build()
-            }
-
-            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.notify(0, notification)
-        }
-    }
 
 
     class SettingsFragment : PreferenceFragmentCompat() {

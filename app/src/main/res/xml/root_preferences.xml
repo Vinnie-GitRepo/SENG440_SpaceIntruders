@@ -6,12 +6,12 @@
         <EditTextPreference
             android:id="@+id/username"
             app:key="username"
-            app:title="Username"
+            app:title="@string/username_label"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
             app:key="notificationswitch"
-            app:title="Notifications" />
+            app:title="@string/notifications_label" />
 
         <Preference
             android:title="@string/colour_change" >
