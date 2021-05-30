@@ -22,10 +22,10 @@ class ColorPickerActivity : AppCompatActivity() {
         setContentView(R.layout.colour_picker_layout)
         loadSettings(findViewById(android.R.id.content))
 
-        var shipImage = findViewById<ImageView>(R.id.shipImage)
+        val shipImage = findViewById<ImageView>(R.id.shipImage)
         shipImage.setColorFilter(colour, PorterDuff.Mode.SRC_ATOP)
 
-        var colourWheel = findViewById<ColorWheel>(R.id.colorWheel)
+        val colourWheel = findViewById<ColorWheel>(R.id.colorWheel)
         colourWheel.rgb = colour
         colourWheel.colorChangeListener = { rgb: Int ->
             colour = colourWheel.rgb
@@ -38,7 +38,7 @@ class ColorPickerActivity : AppCompatActivity() {
         saveSettings(findViewById(android.R.id.content))
     }
 
-    fun saveSettings(view: View) {
+    private fun saveSettings(view: View) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         with(sharedPref.edit()) {
             putInt("colour", colour)
@@ -46,7 +46,7 @@ class ColorPickerActivity : AppCompatActivity() {
         }
     }
 
-    fun loadSettings(view: View) {
+    private fun loadSettings(view: View) {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         colour = sharedPref.getInt("colour", Color.rgb(255, 255, 255))
     }

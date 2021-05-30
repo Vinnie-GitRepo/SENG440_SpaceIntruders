@@ -12,10 +12,18 @@
         tools:layout="@layout/fragment_menu" >
         <action
             android:id="@+id/action_menuFragment_to_pairingFragment"
-            app:destination="@id/pairingFragment" />
+            app:destination="@id/pairingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_menuFragment_to_gameRecordFragment"
-            app:destination="@id/gameRecordFragment" />
+            app:destination="@id/gameRecordFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/pairingFragment"
@@ -24,7 +32,11 @@
         tools:layout="@layout/fragment_pairing" >
         <action
             android:id="@+id/action_pairingFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+            app:destination="@id/gameFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
@@ -33,7 +45,11 @@
         tools:layout="@layout/fragment_game" >
         <action
             android:id="@+id/action_gameFragment_to_endGameFragment"
-            app:destination="@id/endGameFragment" />
+            app:destination="@id/endGameFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/endGameFragment"
@@ -42,7 +58,11 @@
         tools:layout="@layout/fragment_end_game" >
         <action
             android:id="@+id/action_endGameFragment_to_menuFragment2"
-            app:destination="@id/menuFragment" />
+            app:destination="@id/menuFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/to_right" />
     </fragment>
     <fragment
         android:id="@+id/gameRecordFragment"
