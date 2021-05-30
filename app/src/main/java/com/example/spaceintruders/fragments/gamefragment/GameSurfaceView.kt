@@ -27,7 +27,6 @@ class GameSurfaceView(context: Context, private val screenX: Int, private val sc
     private val paint: Paint = Paint()
     private val textPaint: Paint = Paint()
     private val typeface: Typeface = ResourcesCompat.getFont(context, R.font.orbitron)!!
-// Typeface.createFromAsset(context.resources.assets, context.getpaR.font.orbitron)
     var tilt: Float = 0f
     private var canShootSmall = 0
     private var canShootbig = 0

@@ -128,7 +128,7 @@ class PairingFragment : Fragment(), NearbyPeersRecyclerViewAdapter.OnConnectList
         val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
         requestPermissions(permissions, 100, {
         }, {
-            Toast.makeText(context, "Location not permitted.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, getString(R.string.permission_issue), Toast.LENGTH_LONG).show()
         })
     }
 
@@ -218,9 +218,9 @@ class PairingFragment : Fragment(), NearbyPeersRecyclerViewAdapter.OnConnectList
 
     private fun promptForWriteSettings(requestId: Int) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("This operation requires the ability to modify system settings. Please grant this permission on the next screen.")
-        builder.setPositiveButton("Okay") { _, _ ->
-            startActivityForResult(Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:${requireContext().packageName}")), requestId)
+        builder.setMessage(getString(R.string.permission_justification))
+        builder.setPositiveButton(getString(R.string.okay)) { _, _ ->
+            startActivityForResult(Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse(getString(R.string.package_string).format(requireContext().packageName))), requestId)
         }
         builder.show()
     }

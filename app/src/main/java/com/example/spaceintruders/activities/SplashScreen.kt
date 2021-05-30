@@ -50,9 +50,7 @@ class SplashScreen : AppCompatActivity() {
 
     }
 
-
     class AlarmReceiver : BroadcastReceiver() {
-
         @SuppressLint("ServiceCast")
         override fun onReceive(context: Context, intent: Intent) {
             val openAppIntent: PendingIntent = Intent(context, SplashScreen::class.java).run {
@@ -61,8 +59,8 @@ class SplashScreen : AppCompatActivity() {
 
             val notification = Notification.Builder(context, Notification.CATEGORY_REMINDER).run {
                 setSmallIcon(R.drawable.ic_action_name)
-                setContentTitle("The Galaxy Needs you!")
-                setContentText("Why not play a friendly game of Space Intruders?")
+                setContentTitle(context.getString(R.string.notification_title))
+                setContentText(context.getString(R.string.notification_text))
                 setContentIntent(openAppIntent)
                 setAutoCancel(true)
                 build()

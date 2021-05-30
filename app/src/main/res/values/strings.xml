@@ -68,4 +68,10 @@
     <string name="controls_text">To move your ship, tilt the phone from side to side. To shoot across to your enemy, do a swipe up action. To intercept your opponents missiles, fire a bullet by clicking the screen.</string>
     <string name="info">How to play</string>
     <string name="share">SHARE</string>
+    <string name="notification_title">The Galaxy Needs you!</string>
+    <string name="notification_text">Why not play a friendly game of Space Intruders?</string>
+    <string name="permission_issue">Location not permitted.</string>
+    <string name="permission_justification">This operation requires the ability to modify system settings. Please grant this permission on the next screen.</string>
+    <string name="okay">Okay</string>
+    <string name="package_string">package:%s</string>
 </resources>
