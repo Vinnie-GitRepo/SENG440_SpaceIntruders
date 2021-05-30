@@ -54,6 +54,9 @@ class EndGameFragment : Fragment() {
         homeScore.text = gameViewModel.scoreHomePlayer.value.toString()
         visitScore.text = gameViewModel.scoreVisitPlayer.value.toString()
 
+        gameViewModel.addGameRecord(getString(R.string.you), nearbyCommunication.getOpponentName()!!)
+//        gameViewModel.addGameRecord(getString(R.string.you), PreferenceManager.getDefaultSharedPreferences(application).getString("username", "client"))
+
         return view
     }
 
