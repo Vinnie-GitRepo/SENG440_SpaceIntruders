@@ -1,5 +1,8 @@
 package com.example.spaceintruders.activities
 
+import android.annotation.SuppressLint
+import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -7,6 +10,7 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.media.Image
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
@@ -48,11 +52,11 @@ class SettingsActivity : AppCompatActivity() {
             shipImage.setColorFilter(colour, PorterDuff.Mode.SRC_ATOP)
         }
 
+        ///start of block to move to result screen
 
         var opponent = "Vinnie"
         var result = "hard-won victory and"
         var score = 20000
-
 
         var shareButton = findViewById<Button>(R.id.shareButton)
         shareButton.setOnClickListener{
@@ -68,13 +72,21 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
+        //end of block to move to result screen
+        //also remove button from settings layout
 
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val notifsOn = sharedPref.getBoolean("notificationswitch", false)
 
-//        var saveSettingButton = findViewById<Button>(R.id.savesettingsbutton)
-//        saveSettingButton.setOnClickListener{
-//            saveSettings(findViewById(android.R.id.content))
-//        }
+        notificationChannel()
+        val notifIntent = Intent(applicationContext, AlarmReceiver::class.java).let {
+            PendingIntent.getBroadcast(applicationContext, 0, it, 0)
+        }
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        if(notifsOn) {
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 86400000, notifIntent)
+        }
     }
 
     override fun onStop() {
@@ -94,6 +106,41 @@ class SettingsActivity : AppCompatActivity() {
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
         colour = sharedPref.getInt("colour", Color.rgb(255, 255, 255))
     }
+
+    fun notificationChannel() {
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(Notification.CATEGORY_REMINDER, "Daily Reminder", importance).apply {
+            description = "A daily reminder to play Space Intruders"
+        }
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+
+    }
+
+
+    class AlarmReceiver : BroadcastReceiver() {
+
+        @SuppressLint("ServiceCast")
+        override fun onReceive(context: Context, intent: Intent) {
+            val openAppIntent: PendingIntent = Intent(context, SplashScreen::class.java).run {
+                PendingIntent.getActivity(context, 0, this, 0)
+            }
+
+            val notification = Notification.Builder(context, Notification.CATEGORY_REMINDER).run {
+                setSmallIcon(R.drawable.ic_action_name)
+                setContentTitle("The Galaxy Needs you!")
+                setContentText("Why not play a friendly game of Space Intruders?")
+                setContentIntent(openAppIntent)
+                setAutoCancel(true)
+                build()
+            }
+
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(0, notification)
+        }
+    }
+
+
 
 
 
