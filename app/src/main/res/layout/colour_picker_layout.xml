@@ -1,0 +1,31 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|top"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/shipImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@string/ship_preview"
+        app:layout_constraintEnd_toEndOf="@+id/colorWheel"
+        app:layout_constraintStart_toStartOf="@+id/colorWheel"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/player_image" />
+
+    <com.apandroid.colorwheel.ColorWheel
+        android:id="@+id/colorWheel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shipImage" />
+</androidx.constraintlayout.widget.ConstraintLayout>
