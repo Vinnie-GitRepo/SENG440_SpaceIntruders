@@ -18,13 +18,6 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-
-
-        Handler().postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, 2000) //milliseconds.
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         val notifsOn = sharedPref.getBoolean("notificationswitch", false)
 
@@ -38,10 +31,17 @@ class SplashScreen : AppCompatActivity() {
             alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 86400000, notifIntent)
         }
 
+        Handler().postDelayed({
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, 2000) //milliseconds.
+
+
     }
 
     fun notificationChannel() {
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_LOW
         val channel = NotificationChannel(Notification.CATEGORY_REMINDER, "Daily Reminder", importance).apply {
             description = "A daily reminder to play Space Intruders"
         }

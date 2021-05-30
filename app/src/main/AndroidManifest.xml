@@ -42,7 +42,7 @@
             android:label="@string/title_activity_main"/>
 
         <receiver
-            android:name=".activities.SettingsActivity$AlarmReceiver"
+            android:name=".activities.SplashScreen$AlarmReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>
