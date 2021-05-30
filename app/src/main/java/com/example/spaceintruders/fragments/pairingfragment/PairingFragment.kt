@@ -24,8 +24,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
-import com.example.spaceintruders.services.Endpoint
-import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.viewmodels.Endpoint
+import com.example.spaceintruders.viewmodels.NearbyCommunication
 import com.google.android.gms.nearby.connection.*
 
 

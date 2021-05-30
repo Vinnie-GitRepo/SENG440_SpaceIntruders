@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.spaceintruders.R
-import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.viewmodels.NearbyCommunication
 
 /**
  * Fragments for main menu pairing and the game play will branch off this.

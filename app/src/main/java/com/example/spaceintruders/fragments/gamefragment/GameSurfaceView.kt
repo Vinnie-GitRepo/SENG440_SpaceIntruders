@@ -11,7 +11,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceView
 import com.example.spaceintruders.gameentities.*
-import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.viewmodels.NearbyCommunication
 import com.example.spaceintruders.util.BulletCollection
 import com.example.spaceintruders.viewmodels.GameViewModel
 

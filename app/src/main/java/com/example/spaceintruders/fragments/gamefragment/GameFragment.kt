@@ -7,7 +7,6 @@ import android.app.Dialog
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Point
-import android.graphics.Rect
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -23,7 +22,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.spaceintruders.R
-import com.example.spaceintruders.services.NearbyCommunication
+import com.example.spaceintruders.viewmodels.NearbyCommunication
 import com.example.spaceintruders.util.AppUtil.getColorFromAttr
 import com.example.spaceintruders.viewmodels.GameViewModel
 
@@ -53,16 +52,25 @@ class GameFragment : Fragment() {
             try {
                 val number = instruction.removePrefix("bullet")
                 gameSurfaceView.enemyShoot(number.toFloat())
-                nearbyCommunication.resetInstruction()
             } catch (e : NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
+            nearbyCommunication.resetInstruction()
         } else if (instruction.startsWith("youWon")) {
             try {
                 val number = instruction.removePrefix("youWon")
-                gameViewModel
-
-            } catch (e : NumberFormatException) {
+                gameViewModel.setHomeScore(number.toInt())
+            } catch (e: NumberFormatException) {
+                Log.e("Instruction parser", "Failed to parse: $e")
+            }
+            nearbyCommunication.sendYourScore(requireContext(), gameViewModel.scoreVisitPlayer.value!!.toInt())
+            nearbyCommunication.resetInstruction()
+            navigateToEndGame()
+        } else if (instruction.startsWith("endScore")) {
+            try {
+                val number = instruction.removePrefix("endScore")
+                gameViewModel.setHomeScore(number.toInt())
+            } catch (e: NumberFormatException) {
                 Log.e("Instruction parser", "Failed to parse: $e")
             }
             navigateToEndGame()
@@ -83,14 +91,10 @@ class GameFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // Create sensor manager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY).let { sensor ->
-            sensorManager.registerListener(gravityListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
-        }
     }
 
     private fun navigateToEndGame() {
         findNavController().navigate(R.id.action_gameFragment_to_endGameFragment)
-
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -99,6 +103,9 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY).let { sensor ->
+            sensorManager.registerListener(gravityListener, sensor, SensorManager.SENSOR_DELAY_FASTEST)
+        }
 
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -125,8 +132,7 @@ class GameFragment : Fragment() {
 
         gameViewModel.scoreVisitPlayer.observe(viewLifecycleOwner) {
             if (it >= 3) {
-                nearbyCommunication.sendOpponentVictoryCondition(requireContext())
-                navigateToEndGame()
+                nearbyCommunication.sendOpponentVictoryCondition(requireContext(), gameViewModel.scoreVisitPlayer.value!!)
             }
         }
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -149,6 +155,7 @@ class GameFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        sensorManager.unregisterListener(gravityListener)
         gameSurfaceView.pause()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);

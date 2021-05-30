@@ -1,4 +1,4 @@
-package com.example.spaceintruders.services
+package com.example.spaceintruders.viewmodels
 
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 

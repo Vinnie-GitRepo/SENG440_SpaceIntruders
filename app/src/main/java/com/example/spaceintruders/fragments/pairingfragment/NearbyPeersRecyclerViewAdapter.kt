@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.spaceintruders.R
-import com.example.spaceintruders.services.Endpoint
+import com.example.spaceintruders.viewmodels.Endpoint
 
 class NearbyPeersRecyclerViewAdapter(private val connectListener: OnConnectListener): RecyclerView.Adapter<NearbyPeersRecyclerViewAdapter.ItemViewHolder>() {
     private var values: List<Endpoint> = arrayListOf()
