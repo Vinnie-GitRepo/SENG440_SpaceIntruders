@@ -50,11 +50,24 @@
             android:id="@+id/home_SettingsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
             app:backgroundTint="@color/purple_300"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_settings_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/home_tutorial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:clickable="true"
+            app:backgroundTint="@color/purple_300"
+            app:layout_constraintEnd_toStartOf="@+id/home_SettingsButton"
+            app:layout_constraintTop_toTopOf="@+id/home_SettingsButton"
+            app:srcCompat="@drawable/ic_baseline_info_24" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

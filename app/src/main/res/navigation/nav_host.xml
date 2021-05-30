@@ -24,6 +24,9 @@
             app:exitAnim="@anim/to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/to_right" />
+        <action
+            android:id="@+id/action_menuFragment_to_tutorialFragment"
+            app:destination="@id/tutorialFragment" />
     </fragment>
     <fragment
         android:id="@+id/pairingFragment"
@@ -68,4 +71,9 @@
         android:id="@+id/gameRecordFragment"
         android:name="com.example.spaceintruders.fragments.recordFragment.GameRecordFragment"
         android:label="GameRecordFragment" />
+    <fragment
+        android:id="@+id/tutorialFragment"
+        android:name="com.example.spaceintruders.fragments.tutorialfragment.TutorialFragment"
+        android:label="fragment_tutorial"
+        tools:layout="@layout/tutorial_layout" />
 </navigation>

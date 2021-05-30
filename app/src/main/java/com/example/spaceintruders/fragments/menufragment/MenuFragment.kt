@@ -12,7 +12,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.example.spaceintruders.R
 import com.example.spaceintruders.activities.SettingsActivity
-import com.example.spaceintruders.fragments.recordFragment.GameRecordFragment
+import com.example.spaceintruders.activities.TutorialActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 /**
@@ -22,6 +22,7 @@ class MenuFragment : Fragment() {
     private lateinit var playButton: Button
     private lateinit var scoreButton: Button
     private lateinit var settingsButton: FloatingActionButton
+    private lateinit var tutorialButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +42,7 @@ class MenuFragment : Fragment() {
         playButton = view.findViewById(R.id.home_PlayButton)
         scoreButton = view.findViewById(R.id.home_ScoresButton)
         settingsButton = view.findViewById(R.id.home_SettingsButton)
+        tutorialButton = view.findViewById(R.id.home_tutorial)
 
         playButton.setOnClickListener(
             Navigation.createNavigateOnClickListener(R.id.action_menuFragment_to_pairingFragment, null)
@@ -53,6 +55,11 @@ class MenuFragment : Fragment() {
 
         scoreButton.setOnClickListener {
             findNavController().navigate(R.id.action_menuFragment_to_gameRecordFragment)
+        }
+
+        tutorialButton.setOnClickListener {
+            val intent = Intent(requireContext(), TutorialActivity::class.java)
+            startActivity(intent)
         }
 
         return view

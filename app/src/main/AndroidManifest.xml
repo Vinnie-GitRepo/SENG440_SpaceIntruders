@@ -33,13 +33,19 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.ColorPickerActivity"
+        <activity
+            android:name=".activities.ColorPickerActivity"
             android:label="@string/colour_change"
             android:theme="@style/Theme.AppCompat"/>
 
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"/>
+
+        <activity
+            android:name=".activities.TutorialActivity"
+            android:label="@string/info"
+            android:theme="@style/Theme.AppCompat"/>
 
         <receiver
             android:name=".activities.SplashScreen$AlarmReceiver"
